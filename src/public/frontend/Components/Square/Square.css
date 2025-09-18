@@ -15,8 +15,9 @@
   justify-items: center;
   grid-template-columns: 100%;
   grid-template-rows: 100%;
+  user-select: none;
 }
 
-.Square:hover, .Square.Hovered {
+.Square:hover:not(.Square:active), .Square.Hovered {
   background: var(--square-color-hover);
 }

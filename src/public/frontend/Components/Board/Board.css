@@ -1,53 +1,94 @@
-:root{
+:root {
   --board-color: rgb(11, 85, 73);
-  --gap-color:white;
-  --edge-color:rgb(15, 105, 98)
+  --gap-color: white;
+  --edge-color: rgb(15, 105, 98);
 }
 .Board {
   background-color: var(--board-color);
-  --size:90vmin;
-  width: var(--size);
-  max-width: var(--size);
-  max-height: var(--size);
-  aspect-ratio: 1/1.2;
+  --size: 90vmin;
+  max-width: 70vw;
+  height: var(--size);
+  max-height: 70vw;
+  aspect-ratio: 1/1;
   display: grid;
   align-items: center;
   justify-content: center;
   justify-items: center;
-  padding-bottom: 0%;
-  grid-template-columns: 100%;
-  grid-template-rows: 90% 10%;
+  padding: 0 4vmin;
+  grid-template-columns: 1.5fr 17fr 1.5fr;
+  grid-template-rows: 1.5fr 17fr 1.5fr 2fr;
   box-sizing: border-box;
-  border-radius: .5vmin;
-  border: 5vmin solid var(--board-color);
-  border-bottom: 2vmin solid var(--board-color);
-  border-top: 4vmin solid var(--board-color);
+  border-radius: 0.5vmin;
+  border:2vmin solid var(--board-color);
   box-shadow: 0 0 0 1vmin black;
 }
+.Board > .LetterIndexes {
+  grid-area: 1/ 2 / 1 / 2;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 1.5vmin;
+  color: white;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: 1fr;
+  user-select: none;
+}
+.Board > .LetterIndexes.Bottom {
+  grid-area: 3/ 2 / 3 / 2;
+}
+.Board > .LetterIndexes > * {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
+.Board > .NumberIndexes {
+  grid-area: 2 / 1 / 3 / 2;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 1.5vmin;
+  color: white;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(15, 1fr);
+  user-select: none;
+}
+.Board > .NumberIndexes.Right {
+  grid-area: 2/ 3 / 3 / 3;
+}
+.Board > .NumberIndexes > * {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
 
-.Board>.SquareContainer {
+.Board > .SquareContainer {
+  grid-area: 2 / 2 / 3 / 2;
   background: var(--gap-color);
   width: max-content;
   height: max-content;
-  height: 100%;
-  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
   aspect-ratio: 1/1;
   display: grid;
   grid-template-columns: repeat(15, 1fr);
   grid-template-rows: repeat(15, 1fr);
-  gap:.2vmin;
-  padding:.2vmin;
-  border-radius: .5vmin;
+  gap: 0.2vmin;
+  padding: 0.2vmin;
+  border-radius: 0.5vmin;
   overflow: hidden;
 }
-.Board>.Title{
+.Board > .Title {
+  grid-area: 4 / 2 / 4 / 2;
   width: 100%;
   letter-spacing: 2vmin;
-  color:white;
+  color: white;
   font-weight: bold;
   font-family: Arial, Helvetica, sans-serif;
   display: grid;
   align-items: center;
   justify-content: center;
   font-size: 2.5vmin;
+  user-select: none;
 }
