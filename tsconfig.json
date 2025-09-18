@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",          // ESM-aware
+    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "declaration": true,          // generate d.ts
+    "outDir": "dist",
+  },
+  "include": ["src"]
+}

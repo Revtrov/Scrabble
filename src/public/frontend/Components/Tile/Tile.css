@@ -1,0 +1,43 @@
+.Tile{
+  height: 80%;
+  aspect-ratio: 1/1;
+  background:#ffdda7;
+  box-shadow: 0 .3vmin 0 0 #ae9772;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  border-radius: .5vmin;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  position:relative;
+  margin-bottom:.3vmin;
+  cursor: pointer;
+  will-change: transform;
+  transition: transform .1s cubic-bezier(0,.21,0,1.83);
+  user-select: none;
+}
+.Tile:hover{
+  transform: scale(1.05);
+}
+.Tile>.Letter{
+  width: 100%;
+  height: 100%;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  font-size: 2.5vmin;
+  font-weight:bold;
+  box-sizing: border-box;
+  padding-bottom: .5vmin;
+}
+.Tile>.Value{
+  position: absolute;
+  bottom:.25vmin;
+  right:.5vmin;
+  font-weight: 900;
+  display: grid;
+  align-content: center;
+  justify-content: end;
+  font-size:1vmin;
+  box-sizing: border-box;
+}

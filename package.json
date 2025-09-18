@@ -1,0 +1,40 @@
+{
+  "name": "chess",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "copy-assets": "npx cpy \"src/public/**/*\" dist/public --parents --overwrite",
+    "copy-assets:watch": "npx chokidar \"src/public/**/*\" -c \"npm run copy-assets\"",
+    "build": "tsup src/server.ts --format esm --out-dir dist && npm run copy-assets",
+    "dev": "concurrently \"tsup src/server.ts --format esm --out-dir dist --watch\" \"npm run copy-assets:watch\" \"nodemon dist/server.mjs\"",
+    "start": "node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^13.0.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/ws": "^8.18.1",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.2.1",
+    "cpy": "^12.0.1",
+    "cpy-cli": "^6.0.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  }
+}

@@ -1,0 +1,22 @@
+:root {
+  --square-color: rgb(15, 105, 98);
+  --square-color-hover: rgb(36, 36, 53);
+}
+
+.Square {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1/1;
+  background: var(--square-color);
+  box-sizing: border-box;
+  border-radius: .5vmin;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  grid-template-columns: 100%;
+  grid-template-rows: 100%;
+}
+
+.Square:hover, .Square.Hovered {
+  background: var(--square-color-hover);
+}

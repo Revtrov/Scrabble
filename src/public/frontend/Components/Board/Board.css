@@ -1,0 +1,53 @@
+:root{
+  --board-color: rgb(11, 85, 73);
+  --gap-color:white;
+  --edge-color:rgb(15, 105, 98)
+}
+.Board {
+  background-color: var(--board-color);
+  --size:90vmin;
+  width: var(--size);
+  max-width: var(--size);
+  max-height: var(--size);
+  aspect-ratio: 1/1.2;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  padding-bottom: 0%;
+  grid-template-columns: 100%;
+  grid-template-rows: 90% 10%;
+  box-sizing: border-box;
+  border-radius: .5vmin;
+  border: 5vmin solid var(--board-color);
+  border-bottom: 2vmin solid var(--board-color);
+  border-top: 4vmin solid var(--board-color);
+  box-shadow: 0 0 0 1vmin black;
+}
+
+.Board>.SquareContainer {
+  background: var(--gap-color);
+  width: max-content;
+  height: max-content;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1/1;
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-template-rows: repeat(15, 1fr);
+  gap:.2vmin;
+  padding:.2vmin;
+  border-radius: .5vmin;
+  overflow: hidden;
+}
+.Board>.Title{
+  width: 100%;
+  letter-spacing: 2vmin;
+  color:white;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5vmin;
+}
