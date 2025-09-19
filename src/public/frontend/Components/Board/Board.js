@@ -5,6 +5,7 @@ const alphabetLower = Array.from({ length: 26 }, (_, i) =>
   String.fromCharCode(65 + i),
 )
 
+
 export class Board {
   constructor(_parentElement, _sideLength) {
     if (!_sideLength) throw new Error('Board must have side length')
