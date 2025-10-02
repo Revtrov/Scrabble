@@ -50,6 +50,10 @@
 .Bag > .LetterTypeContainer > .VowelsLeft {
   display: grid;
   grid-template-columns: 50% 50%;
+
+}
+.Bag > .LetterTypeContainer > *>.Quantity{
+  text-align: end;
 }
 .Bag > .LetterTypeContainer {
   font-size: 1.1vmin;

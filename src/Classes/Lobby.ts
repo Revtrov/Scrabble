@@ -14,7 +14,6 @@ export class Lobby {
   private tileBag = new TileBag();
   private wss: SafeWebSocketServer;
   private id: string = uuid4();
-  private board: Board;
   private clients: Set<string> = new Set();
   private clientToPlayerMap: Map<string, Player> = new Map();
   private playerToClientMap: Map<Player, string> = new Map();
@@ -27,8 +26,6 @@ export class Lobby {
 
     lobbyMap.set(this.id, this);
     this.wss = getOrCreateWSS();
-    this.board = new Board(this)
-    this.board.print()
   }
 
   asDTO() {
@@ -73,9 +70,6 @@ export class Lobby {
       this.playerIdMap.set(newPlayer.getId(), newPlayer)
     }
   }
-  placePiece(player: Player, tile: Tile, i: number, j: number) {
-    this.board.placePiece(player, tile, i, j)
-  }
   getRacks() {
     return [...this.players.values()].map(player => player.getRack().getValue())
   }
@@ -88,6 +82,7 @@ export class Lobby {
       case "turnAction":
         if (!msg.clientId || !msg.requestId) return;
         this.gameManager.handleTurnAction(msg)
+        this.wss.broadcast(msg);
     }
   }
   handleClientDisconnect(id: string) {

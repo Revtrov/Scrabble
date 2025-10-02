@@ -20,9 +20,9 @@ export class Player {
   getId():string{
     return this.id;
   }
-  placePiece(tile:Tile, i:number, j:number){
-    this.lobby.placePiece(this, tile, i, j);
-  }
+  // placePiece(tile:Tile, i:number, j:number){
+  //   this.lobby.placePiece(this, tile, i, j);
+  // }
   asDTO(){
     return {
       id:this.id

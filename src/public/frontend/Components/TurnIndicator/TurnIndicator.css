@@ -1,20 +1,15 @@
-.Rack {
+.TurnIndicator {
   width: 100%;
   height: 100%;
   background: var(--on-board-dark-color);
   border-radius: 1vmin;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-
-
-  grid-template-rows: 100%;
+  grid-template-rows: repeat(auto-fit, minmax(3vmin, 1fr));
+  grid-template-columns: 100%;
   align-items: center;
   justify-content: center;
   justify-items: center;
   box-sizing: border-box;
-  padding: 0 2vmin;
-
-}
-.Rack>.Tile{
-  transition: all .5s ease;
+  padding: 1vmin 2vmin;
+  gap: 1vmin;
 }

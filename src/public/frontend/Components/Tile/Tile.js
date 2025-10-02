@@ -32,6 +32,7 @@ export class Tile {
     this.parentElement.appendChild(this.fragment)
   }
   onDrag(e) {
+    this.root.classList.add("dragging");
     if (this.cell) {
       this.cell.tile = null;
       //this.cell.root.classList.toggle("contains", false)
@@ -39,5 +40,6 @@ export class Tile {
     e.dataTransfer.setData(onDragMessage, this.data.id)
   }
   onDragEnd(e) {
+    this.root.classList.remove("dragging");
   }
 }

@@ -5,6 +5,9 @@ export class SessionConfigurationModal {
     this.lobbies = _lobbies;
     this.fragment = document.createDocumentFragment();
 
+    this.sessionModalBackgroundDim = document.createElement("div")
+    this.sessionModalBackgroundDim.classList.add("sessionModalBackgroundDim")
+
     this.root = document.createElement("div")
     this.root.classList.add("sessionModal")
 
@@ -19,7 +22,17 @@ export class SessionConfigurationModal {
     for(const lobbie of this.lobbies){
       const lobbyListItem = document.createElement("div")
       lobbyListItem.classList.add("lobbyListItem")
-      lobbyListItem.innerText = "Code: " + lobbie.id + ", Players: "+lobbie.clientCount
+
+      const lobbyListItemCode = document.createElement("div");
+      lobbyListItemCode.classList.add("code")
+      lobbyListItemCode.innerText = "Code: " + lobbie.id
+      lobbyListItem.appendChild(lobbyListItemCode)
+      
+      const lobbyListItemPlayerCount = document.createElement("div");
+      lobbyListItemPlayerCount.innerText = "Players: "+lobbie.clientCount
+      lobbyListItem.appendChild(lobbyListItemPlayerCount)
+      lobbyListItemCode.classList.add("playerCount")
+
       this.lobbyElements.push(lobbyListItem)
       this.lobbyList.appendChild(lobbyListItem)
     }
@@ -61,6 +74,7 @@ export class SessionConfigurationModal {
     }
     this.root.appendChild(this.createLobbyButton)
 
+    this.fragment.appendChild(this.sessionModalBackgroundDim)
     this.fragment.appendChild(this.root)
     this.parentElement.appendChild(this.fragment)
   }

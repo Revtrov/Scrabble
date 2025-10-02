@@ -1,8 +1,11 @@
 import { Board } from "../Components/Board/Board.js";
 import { TileBag } from "../Components/TileBag/TileBag.js";
 import { SessionManager } from "./SessionManager.js";
-import {Rack} from "../Components/Rack/Rack.js"
-import {Player} from "../Actors/Player.js"
+import { Rack } from "../Components/Rack/Rack.js"
+import { Player } from "../Actors/Player.js"
+import { TurnAction } from "../Actors/TurnAction.js";
+import { TurnControls } from "../Components/TurnControls/TurnControls.js";
+import { TurnIndicator } from "../Components/TurnIndicator/TurnIndicator.js";
 export class GameManager {
   constructor() {
     this.session;
@@ -10,7 +13,9 @@ export class GameManager {
     this.board = new Board(document.body, sideLength);
     this.tileBag = new TileBag(document.querySelector(".LeftSide"))
     this.player;
+    this.turnIndicator = new TurnIndicator(document.querySelector(".LeftSide"))
     this.rack = new Rack(document.querySelector(".LeftSide"))
+    this.turnControls = new TurnControls(document.querySelector(".LeftSide"))
   }
   async getSession() {
     this.session = new SessionManager(this)
@@ -33,13 +38,24 @@ export class GameManager {
     await this.rack.syncState(this.session.lobby);
   }
 
-  async nextTurn(){
+  /**
+   * Runs when websocket sends action to session manager
+   */
+  async handleTurnAction(msg) {
+    console.log(msg)
+    // identify whether to act on broadcast
+    // (message from this client)?
+  }
+
+  async sendTurnAction(turnAction) {
+    this.session.sendTurnAction
+  }
+  async nextTurn() {
     await this.rack.syncState(this.session.lobby);
   }
-/**
- * Runs when websocket sends action to session manager
- */
-  async handleGameAction(){ 
-
+  async submitTurn(turnAction) {
+    if(typeof turnAction != TurnAction) throw new TypeError("Invalid turnAction type")
+    await this.sendTurnAction(turnAction);
+    await this.nextTurn()
   }
 }

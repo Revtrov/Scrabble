@@ -16,7 +16,7 @@ export class SessionManager {
     try {
       const res = await this.ws.request({ type: 'connect', clientId: this.id })
       this.ws.on('updaterequired', () => this.refreshBoardState());
-      this.ws.on("gameAction", this.gameManager.handleGameAction)
+      this.ws.on("turnAction", this.gameManager.handleTurnAction)
       return true
     } catch (err) {
       console.error('Connection timed out:', err)

@@ -1,5 +1,5 @@
 import { api, SessionManager } from "../../Services/SessionManager.js";
-import { Tile } from "../Tile/Tile.js";
+import { onDragMessage, Tile, tileMap } from "../Tile/Tile.js";
 export class Rack {
   constructor(_parentElement) {
     this.player;
@@ -11,8 +11,55 @@ export class Rack {
     this.root = document.createElement("div")
     this.root.classList.add("Rack")
 
+    this.root.ondragover = (e) => {
+      e.preventDefault()
+      e.dataTransfer.dropEffect = 'move'
+      this.onDragOver(e)
+    }
+    this.root.ondragend = this.root.ondrop = (e) => {
+      this.onDrop(e)
+    }
+
     this.fragment.appendChild(this.root)
     this.parentElement.appendChild(this.fragment)
+  }
+  onDrop(e) {
+    const tile = tileMap.get(e.dataTransfer.getData(onDragMessage));
+    if(!tile) return;
+    if (tile?.parentElement) tile.parentElement.removeChild(tile.root);
+    tile.parentElement = this.root;
+    this.root.appendChild(tile.root);
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left);
+    const section = Math.floor((x / (rect.right - rect.left)) * 7);
+
+
+    const index = Math.max(0, Math.min(section, this.root.children.length));
+    if (index >= this.root.children.length) {
+      this.root.appendChild(tile.root);
+    } else {
+      this.root.insertBefore(tile.root, this.root.children[index]);
+    }
+  }
+  onDragOver(e) {
+    const tile = tileMap.get(e.dataTransfer.getData(onDragMessage));
+    if(!tile) return;
+    if (tile?.parentElement) tile.parentElement.removeChild(tile.root);
+    tile.parentElement = this.root;
+    this.root.appendChild(tile.root);
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left);
+    const section = Math.floor((x / (rect.right - rect.left)) * 7);
+
+
+    const index = Math.max(0, Math.min(section, this.root.children.length));
+    if (index >= this.root.children.length) {
+      this.root.appendChild(tile.root);
+    } else {
+      this.root.insertBefore(tile.root, this.root.children[index]);
+    }
   }
 
   setTiles(tiles) {

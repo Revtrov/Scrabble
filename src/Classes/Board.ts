@@ -10,11 +10,9 @@ enum MoveOutcome{
 }
 
 export class Board {
-  private lobby: Lobby;
   private grid: Cell[][];
   private sideLength: number = 15;
-  constructor(lobby:Lobby) {
-    this.lobby = lobby;
+  constructor() {
     this.grid = Array.from({ length: this.sideLength }, (_, j) => {
       return Array.from({ length: this.sideLength }, (_, i) => {
         return new Cell(i, j);

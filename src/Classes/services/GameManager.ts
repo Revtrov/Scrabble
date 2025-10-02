@@ -1,4 +1,5 @@
 import { ServerResponse } from "../../websocket";
+import { Board } from "../Board";
 import { Lobby } from "../Lobby";
 import { Player } from "../Player";
 import { z } from "zod";
@@ -31,12 +32,15 @@ type TurnActionDTO = z.infer<typeof TurnActionSchema>;
 export class GameManager {
   private lobby: Lobby;
   private players: Set<Player>;
+  private board: Board;
   private turnOrder: Array<Player>;
   private turnIndex: number = 0;
   constructor(lobby: Lobby, players: Set<Player>) {
     this.lobby = lobby;
     this.players = players;
     this.turnOrder = [...this.players.values()];
+    this.board = new Board()
+    this.board.print()
   }
 
   handleTurnAction(msg: ServerResponse) {

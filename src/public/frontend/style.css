@@ -20,12 +20,14 @@ body {
 }
 
 .LeftSide{
-  height: 100%;
+  max-height: 100%;
+  aspect-ratio: 1/2.5;
   width: 100%;
   display: grid;
-  grid-template-rows: 1fr 10vmin 37.5%;
+  grid-template-rows: 1fr 1fr 10vmin 10vmin;
   grid-template-columns: 100%;
   justify-content: center;
   box-sizing: border-box;
-  padding: 0vmin 2vmin;
+  gap:1vmin;
+  padding: 2vmin 2vmin;
 }

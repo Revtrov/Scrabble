@@ -18,7 +18,7 @@
   margin-bottom:.3vmin;
   cursor: pointer;
   will-change: transform;
-  transition: transform .1s cubic-bezier(0,.21,0,1.83);
+  transition: transform .5s cubic-bezier(0,.21,0,1.83);
   user-select: none;
   z-index: 10;
 }

@@ -49,7 +49,7 @@ export class TileBag {
     this.tilesLeftLabel.innerText = 'Tile Bag'
     this.tilesLeft.appendChild(this.tilesLeftLabel)
     this.tilesLeftNumber = document.createElement('div')
-    this.tilesLeftNumber.innerText = '(placeholder)'
+    this.tilesLeftNumber.innerText = '0'
     this.tilesLeft.appendChild(this.tilesLeftNumber)
     this.root.appendChild(this.tilesLeft)
 
@@ -63,7 +63,8 @@ export class TileBag {
     this.vowelsLeftLabel.innerText = 'Vowels:'
     this.vowelsLeft.appendChild(this.vowelsLeftLabel)
     this.vowelsLeftNumber = document.createElement('div')
-    this.vowelsLeftNumber.innerText = '(placeholder)'
+    this.vowelsLeftNumber.classList.add("Quantity")
+    this.vowelsLeftNumber.innerText = '0'
     this.vowelsLeft.appendChild(this.vowelsLeftNumber)
     this.letterTypeContainer.appendChild(this.vowelsLeft)
 
@@ -73,7 +74,8 @@ export class TileBag {
     this.consonantsLeftLabel.innerText = 'Consonants:'
     this.consonantsLeft.appendChild(this.consonantsLeftLabel)
     this.consonantsLeftNumber = document.createElement('div')
-    this.consonantsLeftNumber.innerText = '(placeholder)'
+    this.consonantsLeftNumber.classList.add("Quantity")
+    this.consonantsLeftNumber.innerText = '0'
     this.consonantsLeft.appendChild(this.consonantsLeftNumber)
     this.letterTypeContainer.appendChild(this.consonantsLeft)
 
@@ -86,5 +88,9 @@ export class TileBag {
 
     this.fragment.appendChild(this.root)
     this.parentElement.appendChild(this.fragment)
+  }
+
+  async udpateState(){
+
   }
 }

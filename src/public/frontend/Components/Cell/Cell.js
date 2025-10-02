@@ -19,7 +19,6 @@ export class Square {
     this.root.ondragend = this.root.ondrop = (e) => {
       this.onDrop(e)
     }
-    this.root.ondragend
 
     this.fragment.appendChild(this.root)
     this.parentElement.appendChild(this.fragment)
@@ -32,6 +31,7 @@ export class Square {
   onDrop(e) {
     if (!this.tile) {
       const tile = tileMap.get(e.dataTransfer.getData(onDragMessage))
+      if(!tile) return; // silly chromium issues
       tile.parentElement.removeChild(tile.root)
       tile.parentElement = this.root
       tile.cell = this
@@ -44,6 +44,7 @@ export class Square {
     // console.log(this)
     if (!this.tile) {
       const tile = tileMap.get(e.dataTransfer.getData(onDragMessage))
+      if(!tile) return; // silly chromium issues
       tile.parentElement.removeChild(tile.root)
       tile.parentElement = this.root
       this.root.appendChild(tile.root)
