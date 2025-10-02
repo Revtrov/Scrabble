@@ -28,7 +28,7 @@ const scrabbleTiles = {
   Blank: 2,
 }
 
-export class Bag {
+export class TileBag {
   constructor(_parentElement) {
     this.parentElement = _parentElement
     this.fragment = document.createDocumentFragment()

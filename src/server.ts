@@ -6,10 +6,15 @@ import swaggerJson from "./swagger.json";
 //import { swaggerOptions } from "./swaggerOptions";
 import { SafeWebSocketServer, setupWebSocket } from "./websocket";
 import { fileURLToPath } from "url";
-import { wordSet } from "./Classes/services/Words";
+import { TileBag } from "./Classes/TileBag";
+import { Dictionary } from "./Classes/Dictionary";
+import { Lobby } from "./Classes/Lobby";
+
+await Dictionary.init()
 
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
+
 
 const port = Number(process.env.PORT) || 3000;
 
@@ -23,7 +28,6 @@ export const server = app.listen(port, url, () => {
   console.log(`Server running on ${url}:${port}`);
 });
 
-console.log(wordSet.size);
 export function getOrCreateWSS(): SafeWebSocketServer {
   if (_wss) return _wss;
   _wss = setupWebSocket(server);

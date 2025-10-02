@@ -1,0 +1,113 @@
+:root {
+  --on-board-dark-color: rgba(0, 0, 0, 0.556);
+}
+
+.sessionModal {
+  position: fixed;
+  left: calc(50% - 30vmin);
+  top: calc(50% - 25vmin);
+  background: var(--board-color);
+  height: 50vmin;
+  width: 60vmin;
+  border-radius: 2.5vmin;
+  box-shadow: 0 0 10vmin 100vmin rgba(0, 0, 0, 0.556), 0 0 10vmin 5vmin rgba(0, 0, 0, 0.756);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 1vmin;
+  grid-template-columns: 100%;
+}
+
+.sessionModal>.title {
+  font-size: clamp(2vmin, 3vmin, 4vmin);
+  font-family: Arial, Helvetica, sans-serif;
+  width: 100%;
+  text-align: center;
+  color:white;
+  font-weight: bold;
+  letter-spacing: 1vmin;
+  padding:2.5vmin 0vmin;
+}
+
+.lobbyList {
+  background: var(--on-board-dark-color);
+  width: 70%;
+  height: 100%;
+  min-height: 10vmin;
+  max-height: 10vmin;
+  border-radius: 1vmin;
+  overflow-y: auto;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.joinContainer {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  grid-template-columns: 4fr 1fr;
+  grid-template-rows: 100%;
+  height: 6vmin;
+  gap: 1vmin;
+  box-sizing: border-box;
+}
+
+.joinContainer>.lobbyIdInput {
+  background: var(--on-board-dark-color);
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  border: none;
+  border-radius: 1vmin;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1vmin;
+}
+
+.joinContainer>.joinLobbyButton {
+  background: var(--tile-color);
+  border-radius: 1vmin;
+  height: 100%;
+  border: none;
+  box-sizing: border-box;
+  padding: 1vmin;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1vmin, 1.25vmin, 2.25vmin);
+  will-change: transform;
+  cursor: pointer;
+}
+
+.joinContainer>.joinLobbyButton:hover {
+  transform: scale(1.05)
+}
+
+.joinContainer>.joinLobbyButton:active {
+  transform: scale(1)
+}
+
+
+.createLobbyButton {
+  background: var(--tile-color);
+  border-radius: 1vmin;
+  width: 70%;
+  height: 6vmin;
+  border: none;
+  box-sizing: border-box;
+  padding: 1vmin;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1.25vmin, 1.5vmin, 2.5vmin);
+  will-change: transform;
+  cursor: pointer;
+}
+
+.createLobbyButton:hover {
+  transform: scale(1.05)
+}
+
+.createLobbyButton:active {
+  transform: scale(1)
+}

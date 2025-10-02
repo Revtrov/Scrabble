@@ -1,5 +1,10 @@
+:root{
+  --tile-color:#ffdda7;
+}
+
 .Tile{
-  height: 80%;
+  width: 80%;
+  max-width: 100%;
   aspect-ratio: 1/1;
   background:#ffdda7;
   box-shadow: 0 .3vmin 0 0 #ae9772;
@@ -15,6 +20,7 @@
   will-change: transform;
   transition: transform .1s cubic-bezier(0,.21,0,1.83);
   user-select: none;
+  z-index: 10;
 }
 .Tile:hover{
   transform: scale(1.05);

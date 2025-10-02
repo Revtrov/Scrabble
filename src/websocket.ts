@@ -39,6 +39,7 @@ export interface ServerResponse {
   lobbyId?: string;
   requestId?: string;
   playerId?: string;
+  gameAction?:any;
 }
 
 export class SafeWebSocketServer {

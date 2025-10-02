@@ -1,4 +1,9 @@
-import { Router } from "express"
+import {Router} from "express";
+
+import lobbyRoutes from "./lobbyRoutes"
 
 const router = Router();
-export default router
+
+router.use("/lobby", lobbyRoutes)
+
+export default router;
