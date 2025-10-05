@@ -23,4 +23,10 @@ router.get("/:lobbyId", lobbyController.getLobbyById);
 router.get("/:lobbyId/player/:playerId/rack", lobbyController.getPlayerRack);
 
 
+/**
+ * Get TileBag
+ */
+router.get("/:lobbyId/tilebag", lobbyController.getTileBag);
+
+
 export default router;

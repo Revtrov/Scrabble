@@ -102,7 +102,7 @@ export class Board {
           }
         }
 
-        let square = new Square(this.squareContainerFragment, bonus);
+        let square = new Square(this.squareContainerFragment, bonus, i, j);
         this.squareGrid[i].push(square);
       }
     }

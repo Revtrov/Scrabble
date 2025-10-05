@@ -1,3 +1,5 @@
+import { GameManager } from "../../Services/GameManager.js"
+
 const scrabbleTiles = {
   A: 9,
   B: 2,
@@ -90,7 +92,6 @@ export class TileBag {
     this.parentElement.appendChild(this.fragment)
   }
 
-  async udpateState(){
-
+  async udpateState(tileBagState){
   }
 }

@@ -1,5 +1,6 @@
 export class Player {
-  constructor(_playerId) {
-    this.playerId = _playerId;
+  static playerId;
+  static setPlayerId(playerId){
+    this.playerId = playerId;
   }
 }

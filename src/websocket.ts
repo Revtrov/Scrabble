@@ -2,6 +2,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import { Server } from "http";
 import { Lobby } from "./Classes/Lobby";
 import { lobbyMap } from "./Classes/Lobby";
+import { StateUpdateBody, StateUpdateMessage } from "./Classes/services/GameManager";
 export function setupWebSocket(server: Server): SafeWebSocketServer {
   const wss = new WebSocketServer({ server });
   return new SafeWebSocketServer(wss, lobbyMap);
@@ -39,7 +40,8 @@ export interface ServerResponse {
   lobbyId?: string;
   requestId?: string;
   playerId?: string;
-  gameAction?:any;
+  turnAction?:any;
+  stateUpdate?:StateUpdateBody
 }
 
 export class SafeWebSocketServer {

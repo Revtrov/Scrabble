@@ -1,8 +1,8 @@
-import { api, SessionManager } from "../../Services/SessionManager.js";
+import { Player } from "../../Actors/Player.js";
+import { api } from "../../Services/SessionManager.js";
 import { onDragMessage, Tile, tileMap } from "../Tile/Tile.js";
 export class Rack {
   constructor(_parentElement) {
-    this.player;
     this.parentElement = _parentElement
     this.tiles = []
     this.tileIds = new Set();
@@ -25,9 +25,10 @@ export class Rack {
   }
   onDrop(e) {
     const tile = tileMap.get(e.dataTransfer.getData(onDragMessage));
-    if(!tile) return;
+    if (!tile) return;
     if (tile?.parentElement) tile.parentElement.removeChild(tile.root);
     tile.parentElement = this.root;
+    tile.cell = null;
     this.root.appendChild(tile.root);
 
     const rect = e.currentTarget.getBoundingClientRect();
@@ -44,9 +45,10 @@ export class Rack {
   }
   onDragOver(e) {
     const tile = tileMap.get(e.dataTransfer.getData(onDragMessage));
-    if(!tile) return;
+    if (!tile) return;
     if (tile?.parentElement) tile.parentElement.removeChild(tile.root);
     tile.parentElement = this.root;
+    tile.cell = null;
     this.root.appendChild(tile.root);
 
     const rect = e.currentTarget.getBoundingClientRect();
@@ -66,14 +68,14 @@ export class Rack {
     this.tiles = []
     this.tileIds = new Set();
     for (const data of tiles) {
-      this.tiles.push(new Tile(this.root, data))
+      this.tiles.push(new Tile(this.root, data, true))
       this.tileIds.add(data.id)
     }
   }
 
   async syncState(lobby) {
     // compare and update if different
-    const res = await fetch(api + `/lobby/${lobby.id}/player/${this.player.playerId}/rack`);
+    const res = await fetch(api + `/lobby/${lobby.id}/player/${Player.playerId}/rack`);
     if (!res.ok) throw new Error(`Request failed: ${res.status} ${res.statusText}`);
     const serverRack = await res.json();
     if (serverRack.error) throw new Error(`Rack request failed: ${serverRack.error}`);
@@ -83,6 +85,9 @@ export class Rack {
     if (this.tileIds != serverRackIds) {
       this.setTiles(serverRack.tiles)
     }
+  }
+  getPlacedWord() {
+    return this.tiles.filter(tile => tile.cell);
   }
 
 }

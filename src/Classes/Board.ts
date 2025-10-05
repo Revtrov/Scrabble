@@ -1,9 +1,10 @@
 import { Cell } from "./Cell";
 import { Lobby } from "./Lobby";
 import { Player } from "./Player";
+import { Coord, Direction } from "./services/GameManager";
 import { Tile } from "./Tile";
 
-enum MoveOutcome{
+enum MoveOutcome {
   InvalidIndex,
   AlreadyOccupied,
   Placed
@@ -19,24 +20,30 @@ export class Board {
       })
     })
   }
-  placePiece(player:Player, tile:Tile, i:number, j:number){
-    if(!this.grid?.[j]?.[i]) return MoveOutcome.InvalidIndex;
-    if(this.grid[j][i].getTile()){
-      return MoveOutcome.AlreadyOccupied;
-    }else{
-      this.grid[j][i].setTile(tile);
-      return MoveOutcome.Placed;
+  placeWord(direction: Direction, startIndex: Coord, tiles: Tile[]) {
+    switch (direction) {
+      case Direction.Horizontal:
+        for (let j = startIndex.j; j < startIndex.j + tiles.length; j++) {
+          this.grid[startIndex.i][j].setTile(tiles[j - startIndex.j]);
+        }
+        break;
+      case Direction.Vertical:
+        for (let i = startIndex.i; i < startIndex.i + tiles.length; i++) {
+          this.grid[i][startIndex.j].setTile(tiles[i - startIndex.i]);
+        }
+        break;
     }
   }
-  print(){
+  print() {
     let gridStr = ""
-    for(const row of this.grid){
+    for (const row of this.grid) {
       let rowStr = ""
-      for(const col of row){
-        rowStr+=col.toString()
+      for (const col of row) {
+        rowStr += col.toString()
       }
-      rowStr+="\n"
-      gridStr+=rowStr
+      rowStr += "\n"
+      gridStr += rowStr
     }
+    console.log(gridStr)
   }
 }

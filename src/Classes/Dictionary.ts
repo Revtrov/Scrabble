@@ -54,7 +54,7 @@ export class Dictionary {
   };
 
   static hasWord(word: string) {
-    return this.languageWordsMap[this.selectedLanguage].has(word);
+    return this.languageWordsMap.get(this.selectedLanguage).has(word);
   }
 
   static setLanguage(language: Language) {

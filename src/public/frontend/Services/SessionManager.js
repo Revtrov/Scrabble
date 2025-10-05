@@ -2,6 +2,7 @@ import SafeWebSocket from './SafeWebSocket.js'
 import { SessionConfigurationModal } from '../Components/SessionConfiguration/SessionConfiguration.js'
 export const api = 'http://revtrov:3000/api' // 'http://localhost:3000/api'
 import { generateUUID } from './lib.js'
+import { Player } from '../Actors/Player.js'
 export class SessionManager {
   constructor(_gameManager) {
     this.ws
@@ -15,8 +16,9 @@ export class SessionManager {
   async connectSocket() {
     try {
       const res = await this.ws.request({ type: 'connect', clientId: this.id })
-      this.ws.on('updaterequired', () => this.refreshBoardState());
+      //this.ws.on('updaterequired', () => this.refreshBoardState());
       this.ws.on("turnAction", this.gameManager.handleTurnAction)
+      this.ws.on("stateUpdate", this.gameManager.handleStateUpdate)
       return true
     } catch (err) {
       console.error('Connection timed out:', err)
@@ -94,5 +96,16 @@ export class SessionManager {
   }
   async fetchBoardState() {
 
+  }
+  async sendTurnAction(turnAction) {
+    const res = await this.ws.request({
+      type: 'turnAction',
+      clientId: this.id,
+      lobbyId: this.lobby.id,
+      playerId: Player.playerId,
+      turnAction
+    })
+    console.log(res)
+    return res;
   }
 }

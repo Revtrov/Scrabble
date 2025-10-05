@@ -1,17 +1,15 @@
 import { getOrCreateWSS } from "../server"; ``
 import { SafeWebSocketServer, ServerResponse } from "../websocket";
-import { Board } from "./Board";
+import { Dictionary } from "./Dictionary";
 import { Player } from "./Player";
 import { GameManager } from "./services/GameManager";
-import { Tile } from "./Tile";
-import { TileBag } from "./TileBag";
 import { v4 as uuid4 } from "uuid";
 
+await Dictionary.init()
 export const lobbyMap: Map<string, Lobby> = new Map();
 export class Lobby {
   private players: Set<Player> = new Set();
   public playerIdMap: Map<string, Player> = new Map();
-  private tileBag = new TileBag();
   private wss: SafeWebSocketServer;
   private id: string = uuid4();
   private clients: Set<string> = new Set();
@@ -20,7 +18,6 @@ export class Lobby {
   private gameManager: GameManager;
   private playerSlots: number = 2;
   constructor() {
-
     this.gameManager = new GameManager(this, this.players);
     this.createPlayers();
 
@@ -62,9 +59,12 @@ export class Lobby {
 
     wss.sendToClient(requestId, clientId, playerToAssign.asDTO());
   }
+  sendToClient(requestId:string, clientId:string, data:any){
+    this.wss.sendToClient(requestId, clientId, data);
+  }
   createPlayers(): void {
     for (let i = 0; i < this.playerSlots; i++) {
-      const newPlayer = new Player(this.tileBag, this)
+      const newPlayer = new Player(this.gameManager.getTileBag(), this)
       this.players.add(newPlayer)
 
       this.playerIdMap.set(newPlayer.getId(), newPlayer)
@@ -73,7 +73,14 @@ export class Lobby {
   getRacks() {
     return [...this.players.values()].map(player => player.getRack().getValue())
   }
+  getTileBag(){
+    return this.gameManager.getTileBag();
+  }
+  getGameManager(){
+    return this.gameManager;
+  }
   handleMessage(msg: ServerResponse, wss: SafeWebSocketServer) {
+    console.log(msg)
     switch (msg.type) {
       case "register":
         if (!msg.clientId || !msg.requestId) return;
@@ -84,6 +91,9 @@ export class Lobby {
         this.gameManager.handleTurnAction(msg)
         this.wss.broadcast(msg);
     }
+  }
+  broadcast(msg:ServerResponse){
+    this.wss.broadcast(msg)
   }
   handleClientDisconnect(id: string) {
 

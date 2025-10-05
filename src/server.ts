@@ -6,11 +6,9 @@ import swaggerJson from "./swagger.json";
 //import { swaggerOptions } from "./swaggerOptions";
 import { SafeWebSocketServer, setupWebSocket } from "./websocket";
 import { fileURLToPath } from "url";
-import { TileBag } from "./Classes/TileBag";
 import { Dictionary } from "./Classes/Dictionary";
-import { Lobby } from "./Classes/Lobby";
 
-await Dictionary.init()
+
 
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);

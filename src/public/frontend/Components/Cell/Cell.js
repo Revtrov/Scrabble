@@ -1,9 +1,11 @@
 import { onDragMessage, Tile, tileMap } from '../Tile/Tile.js'
 
 export class Square {
-  constructor(_parentElement, _bonus) {
+  constructor(_parentElement, _bonus, _i, _j) {
     this.parentElement = _parentElement
     this.bonus = _bonus
+    this.i = _i;
+    this.j = _j;
     this.fragment = document.createDocumentFragment()
 
     this.root = document.createElement('div')

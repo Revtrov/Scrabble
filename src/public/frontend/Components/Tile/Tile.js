@@ -1,9 +1,10 @@
 export const tileMap = new Map()
 export const onDragMessage = "draggedTileId"
 export class Tile {
-  constructor(_parentElement, _data) {
+  constructor(_parentElement, _data, _fromRack) {
     this.data = _data
     this.cell;
+    this.fromRack = _fromRack
     if (!this.data.id) throw new Error('data.id should exist')
     tileMap.set(this.data.id, this)
 

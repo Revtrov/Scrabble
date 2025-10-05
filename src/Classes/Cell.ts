@@ -8,13 +8,13 @@ export class Cell {
     this.i = i;
     this.j = j;
   }
-  getTile():Tile|undefined{
+  getTile(): Tile | undefined {
     return this.tile;
   }
-  setTile(tile: Tile){
+  setTile(tile: Tile) {
     this.tile = tile;
   }
-  toString(){
-    return `[${this.tile?this.tile.getLetter(): " "}]`
+  toString() {
+    return `[${this.tile ? this.tile.getLetter() : " "}]`
   }
 }
