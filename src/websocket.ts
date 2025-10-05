@@ -110,10 +110,17 @@ export class SafeWebSocketServer {
     });
   }
 
-  sendToClient(requestId: string, clientId: string, data: unknown) {
+  respondToClient(requestId: string, clientId: string, data: unknown) {
     const ws = this.clients.get(clientId);
     if (ws && ws.readyState === WebSocket.OPEN) {
       new SafeWebSocket(ws).send({ requestId, data });
     }
   }
+  sendToClient(response:ServerResponse) {
+    const ws = this.clients.get(response?.clientId);
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      new SafeWebSocket(ws).send(response);
+    }
+  }
+  
 }

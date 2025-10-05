@@ -25,6 +25,12 @@ export class Square {
     this.fragment.appendChild(this.root)
     this.parentElement.appendChild(this.fragment)
   }
+  setTile(tileData){
+    this.root.innerHTML = ""
+    if(tileData){
+      new Tile(this.root, tileData)
+    }
+  }
   placeTile(tile) {
     if (!(tile instanceof Tile))
       throw new TypeError('tile must be an instance of Tile')

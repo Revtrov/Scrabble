@@ -99,10 +99,16 @@ export class GameManager {
     switch (msg.stateUpdate.type) {
       case "TileBag":
         await this.tileBag.udpateState(msg)
+        break;
       case "Board":
         await this.board.updateState(msg);
+        break;
       case "Rack":
         await this.rack.updateState();
+        break;
+      case "TurnIndicator":
+        await this.turnIndicator.updateState(msg);
+        break;
     }
     // identify whether to act on broadcast
     // (message from this client)?

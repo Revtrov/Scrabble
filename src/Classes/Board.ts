@@ -24,6 +24,7 @@ export class Board {
     return this.grid.map(row=>row.map((cell:Cell)=>cell.asDTO()))
   }
   placeWord(direction: Direction, startIndex: Coord, tiles: Tile[]) {
+    // need to return failure on trying to place word on other word.
     switch (direction) {
       case Direction.Horizontal:
         for (let j = startIndex.j; j < startIndex.j + tiles.length; j++) {

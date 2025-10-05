@@ -18,8 +18,8 @@ export class Lobby {
   private gameManager: GameManager;
   private playerSlots: number = 2;
   constructor() {
-    this.gameManager = new GameManager(this, this.players);
     this.createPlayers();
+    this.gameManager = new GameManager(this, this.players);
 
     lobbyMap.set(this.id, this);
     this.wss = getOrCreateWSS();
@@ -36,7 +36,7 @@ export class Lobby {
   registerClient(clientId: string, requestId: string, wss: SafeWebSocketServer) {
     const existingPlayer = this.clientToPlayerMap.get(clientId);
     if (existingPlayer) {
-      wss.sendToClient(requestId, clientId, existingPlayer.asDTO());
+      wss.respondToClient(requestId, clientId, existingPlayer.asDTO());
       return;
     }
 
@@ -49,7 +49,7 @@ export class Lobby {
     }
 
     if (!playerToAssign) {
-      wss.sendToClient(requestId, clientId, { error: "Lobby Full" });
+      wss.respondToClient(requestId, clientId, { error: "Lobby Full" });
       return
     };
 
@@ -57,14 +57,19 @@ export class Lobby {
     this.playerToClientMap.set(playerToAssign, clientId);
     this.clients.add(clientId);
 
-    wss.sendToClient(requestId, clientId, playerToAssign.asDTO());
+    wss.respondToClient(requestId, clientId, playerToAssign.asDTO());
+    this.gameManager.sendStatesToClient(clientId);
   }
-  sendToClient(requestId:string, clientId:string, data:any){
-    this.wss.sendToClient(requestId, clientId, data);
+  respondToClient(requestId:string, clientId:string, data:any){
+    this.wss.respondToClient(requestId, clientId, data);
+  }
+  sendToClient(response:ServerResponse){
+    this.wss.sendToClient(response);
+
   }
   createPlayers(): void {
     for (let i = 0; i < this.playerSlots; i++) {
-      const newPlayer = new Player(this.gameManager.getTileBag(), this)
+      const newPlayer = new Player(this)
       this.players.add(newPlayer)
 
       this.playerIdMap.set(newPlayer.getId(), newPlayer)

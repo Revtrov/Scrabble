@@ -9,10 +9,11 @@ export class Player {
   private lobby: Lobby;
   private rack: Rack;
   private id: string = uuid4();
-  constructor(tileBag: TileBag, lobby: Lobby) {
-    this.tileBag = tileBag;
-    this.rack = new Rack(this.tileBag);
+  constructor(lobby: Lobby) {
     this.lobby = lobby;
+  }
+  setRack(rack:Rack){
+    this.rack = rack
   }
   getRack(): Rack {
     return this.rack;

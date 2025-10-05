@@ -31,7 +31,6 @@ export class SessionManager {
   }
   async configureSession() {
     const lobbies = await this.fetchLobbyList();
-    console.log("here", lobbies)
     const sessionConfigModal = new SessionConfigurationModal(document.body, this, lobbies);
     return false
   }

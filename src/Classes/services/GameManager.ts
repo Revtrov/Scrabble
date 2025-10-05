@@ -5,11 +5,13 @@ import { Player } from "../Player";
 import { z } from "zod";
 import { TileBag } from "../TileBag";
 import { Dictionary } from "../Dictionary";
+import { Rack } from "../Rack";
 
 enum StateUpdateType {
   TileBag = "TileBag",
   Board = "Board",
-  Rack = "Rack"
+  Rack = "Rack",
+  TurnIndicator = "TurnIndicator"
 }
 export interface StateUpdateBody {
   type: StateUpdateType,
@@ -27,9 +29,9 @@ export enum Direction {
   Vertical = "V",
   Horizontal = "H"
 }
-export interface Coord{
-  i:number,
-  j:number
+export interface Coord {
+  i: number,
+  j: number
 }
 
 const MoveDataSchema = z.object({
@@ -66,14 +68,18 @@ export class GameManager {
   private board: Board;
   private turnOrder: Array<Player>;
   private turnIndex: number = 0;
+  private turnNumber: number = 1;
   private tileBag: TileBag;
   constructor(lobby: Lobby, players: Set<Player>) {
     this.lobby = lobby;
     this.players = players;
     this.turnOrder = [...this.players.values()];
+    this.tileBag = new TileBag()
+    for (const player of this.players.values()) {
+      player.setRack(new Rack(this.tileBag));
+    }
     this.board = new Board()
     this.board.print()
-    this.tileBag = new TileBag()
   }
 
   handleTurnAction(msg: ServerResponse) {
@@ -98,18 +104,33 @@ export class GameManager {
         turnActionResult = this.handlePass(action.data);
         break;
     }
-    this.lobby.sendToClient(msg.requestId, msg.clientId, turnActionResult);
-    this.advanceTurn();
+    this.lobby.respondToClient(msg.requestId, msg.clientId, turnActionResult);
+    if (turnActionResult == TurnActionResult.Success) {
+      this.advanceTurn();
+    }
   }
   private handleMove(playerId: string, moveData: z.infer<typeof MoveDataSchema>): TurnActionResult {
     const { direction, startIndex, tileIds } = moveData;
-    const playerRack = this.lobby.playerIdMap.get(playerId).getRack()
-    if (!playerRack.hasTileIds(tileIds)) throw new Error("Used tiles not in player's Rack")
+
+    const player = this.lobby.playerIdMap.get(playerId);
+    if (player.getId() !== this.turnOrder[this.turnIndex].getId()) {
+      console.log(new Error(`Not player ${player.getId()}'s turn`))
+      return TurnActionResult.Failure;
+    }
+
+    const playerRack = player.getRack()
+    if (!playerRack.hasTileIds(tileIds)) {
+      console.log(new Error("Used tiles not in player's Rack"))
+      return TurnActionResult.Failure;
+    }
     const tiles = tileIds.map(tileId => playerRack.getTileIdMap().get(tileId));
-    // this should be sorted
-    const strWord = tiles.map(tile=>tile.getLetter()).join("");
+    // this should be sorted on client, maybe should sort here just in case
+    const strWord = tiles.map(tile => tile.getLetter()).join("");
     const validWord = Dictionary.hasWord(strWord);
-    if(!validWord) return TurnActionResult.Failure;
+    if (!validWord) {
+      console.log(new Error(`${strWord} not in Dictionary`))
+      return TurnActionResult.Failure
+    };
     // check if connected words too
     // update board
     this.board.placeWord(direction as Direction, startIndex as Coord, tiles);
@@ -125,11 +146,20 @@ export class GameManager {
 
   private handlePass(_: z.infer<typeof PassDataSchema>): TurnActionResult {
     // maybe track consecutive passes to end the game
-    this.advanceTurn();
     return TurnActionResult.Success;
   }
-  private advanceTurn() {
-    this.turnIndex = (this.turnIndex + 1) % this.turnOrder.length;
+  private broadcastStates() {
+    for (const state of Object.values(this.getStates()) as ServerResponse[]) {
+      this.lobby.broadcast(state);
+    };
+  }
+  public sendStatesToClient(clientId: string) {
+    for (const state of Object.values(this.getStates()) as ServerResponse[]) {
+      state.clientId = clientId;
+      this.lobby.sendToClient(state);
+    };
+  }
+  private getStates(): Record<any, ServerResponse> {
     const tileBagUpdate: ServerResponse = {
       type: "stateUpdate",
       stateUpdate: {
@@ -139,7 +169,6 @@ export class GameManager {
         }
       }
     }
-    this.lobby.broadcast(tileBagUpdate);
     const boardUpdate: ServerResponse = {
       type: "stateUpdate",
       stateUpdate: {
@@ -149,7 +178,6 @@ export class GameManager {
         }
       }
     }
-    this.lobby.broadcast(boardUpdate);
     const rackUpdate: ServerResponse = {
       type: "stateUpdate",
       stateUpdate: {
@@ -157,7 +185,23 @@ export class GameManager {
         data: null
       }
     }
-    this.lobby.broadcast(rackUpdate);
+    const turnIndicatorUpdate: ServerResponse = {
+      type: "stateUpdate",
+      stateUpdate: {
+        type: StateUpdateType.TurnIndicator,
+        data: {
+          players: this.turnOrder.map(player => player.asDTO()),
+          turnIndex: this.turnIndex
+        }
+      }
+    }
+    return { tileBagUpdate, boardUpdate, rackUpdate, turnIndicatorUpdate }
+  }
+  private advanceTurn() {
+    this.turnIndex = (this.turnIndex + 1) % this.turnOrder.length;
+    console.log(this.turnIndex)
+    this.turnNumber++;
+    this.broadcastStates();
     this.board.print()
   }
 

@@ -110,8 +110,17 @@ export class Board {
   async fetchState() {
 
   }
-  async updateState(msg){
+  async updateState(msg) {
     console.log(msg)
+    const boardState = msg?.stateUpdate?.data?.board
+
+    if (!boardState) throw new Error("Invalid boardState");
+    for (let i = 0; i < boardState.length; i++) {
+      for (let j = 0; j < boardState.length; j++) {
+        const tileData = boardState[i][j].tile;
+        this.squareGrid[i][j].setTile(tileData);
+      }
+    }
     // get state here and iter grid and reset cell.tile
   }
 }
