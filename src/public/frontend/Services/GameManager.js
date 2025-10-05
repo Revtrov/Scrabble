@@ -7,9 +7,14 @@ import { TurnAction } from "../Actors/TurnAction.js";
 import { TurnControls } from "../Components/TurnControls/TurnControls.js";
 import { TurnIndicator } from "../Components/TurnIndicator/TurnIndicator.js";
 
-const TurnActionResult = Object.freeze({
+export const TurnActionResult = Object.freeze({
   Success: "Success",
   Failure: "Failure",
+})
+
+export const Direction = Object.freeze({
+  Horizontal: "H",
+  Vertical: "V",
 })
 
 export class GameManager {
@@ -58,12 +63,12 @@ export class GameManager {
     const result = await this.sendTurnAction({
       type: "Move",
       data: {
-        direction: sameRow ? "H" : "V",
+        direction: sameRow ? Direction.Horizontal : Direction.Vertical,
         startIndex,
         tileIds: sorted.map(tile => tile.data.id)
       }
     })
-    switch(result.data){
+    switch (result.data) {
       case TurnAction.Failure:
         // reset turn
         break;
@@ -71,9 +76,17 @@ export class GameManager {
         // progress turn
         break;
     }
-    return result
+    return result.data
   }
 
+  static async sendPass() {
+    return await this.sendTurnAction({
+      type: "Pass",
+    })
+  }
+
+  static async sendExchange(tiles) {
+  }
   /**
    * Runs when websocket sends action to session manager
    */
@@ -82,9 +95,14 @@ export class GameManager {
     // (message from this client)?
   }
   static async handleStateUpdate(msg) {
-    switch (msg.type) {
+    console.log(msg)
+    switch (msg.stateUpdate.type) {
       case "TileBag":
         await this.tileBag.udpateState(msg)
+      case "Board":
+        await this.board.updateState(msg);
+      case "Rack":
+        await this.rack.updateState();
     }
     // identify whether to act on broadcast
     // (message from this client)?
@@ -93,12 +111,8 @@ export class GameManager {
   static async sendTurnAction(turnAction) {
     return await this.session.sendTurnAction(turnAction)
   }
-  static async nextTurn() {
-    await this.rack.syncState(this.session.lobby);
-  }
   static async submitTurn(turnAction) {
     if (typeof turnAction != TurnAction) throw new TypeError("Invalid turnAction type")
     await this.sendTurnAction(turnAction);
-    await this.nextTurn()
   }
 }

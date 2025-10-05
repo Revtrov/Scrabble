@@ -20,6 +20,9 @@ export class Board {
       })
     })
   }
+  asDTO(){
+    return this.grid.map(row=>row.map((cell:Cell)=>cell.asDTO()))
+  }
   placeWord(direction: Direction, startIndex: Coord, tiles: Tile[]) {
     switch (direction) {
       case Direction.Horizontal:

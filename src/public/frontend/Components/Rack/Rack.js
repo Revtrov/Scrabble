@@ -1,4 +1,5 @@
 import { Player } from "../../Actors/Player.js";
+import { GameManager } from "../../Services/GameManager.js";
 import { api } from "../../Services/SessionManager.js";
 import { onDragMessage, Tile, tileMap } from "../Tile/Tile.js";
 export class Rack {
@@ -66,6 +67,7 @@ export class Rack {
 
   setTiles(tiles) {
     this.tiles = []
+    this.root.innerHTML = ""
     this.tileIds = new Set();
     for (const data of tiles) {
       this.tiles.push(new Tile(this.root, data, true))
@@ -85,6 +87,9 @@ export class Rack {
     if (this.tileIds != serverRackIds) {
       this.setTiles(serverRack.tiles)
     }
+  }
+  async updateState(){
+    await this.syncState(GameManager.session.lobby);
   }
   getPlacedWord() {
     return this.tiles.filter(tile => tile.cell);

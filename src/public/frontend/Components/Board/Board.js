@@ -110,4 +110,8 @@ export class Board {
   async fetchState() {
 
   }
+  async updateState(msg){
+    console.log(msg)
+    // get state here and iter grid and reset cell.tile
+  }
 }

@@ -7,7 +7,9 @@ import { TileBag } from "../TileBag";
 import { Dictionary } from "../Dictionary";
 
 enum StateUpdateType {
-  TileBag = "TileBag"
+  TileBag = "TileBag",
+  Board = "Board",
+  Rack = "Rack"
 }
 export interface StateUpdateBody {
   type: StateUpdateType,
@@ -111,7 +113,8 @@ export class GameManager {
     // check if connected words too
     // update board
     this.board.placeWord(direction as Direction, startIndex as Coord, tiles);
-    this.advanceTurn();
+    playerRack.removeTiles(tiles);
+    playerRack.fill()
     return TurnActionResult.Success;
   }
 
@@ -122,6 +125,7 @@ export class GameManager {
 
   private handlePass(_: z.infer<typeof PassDataSchema>): TurnActionResult {
     // maybe track consecutive passes to end the game
+    this.advanceTurn();
     return TurnActionResult.Success;
   }
   private advanceTurn() {
@@ -136,6 +140,24 @@ export class GameManager {
       }
     }
     this.lobby.broadcast(tileBagUpdate);
+    const boardUpdate: ServerResponse = {
+      type: "stateUpdate",
+      stateUpdate: {
+        type: StateUpdateType.Board,
+        data: {
+          board: this.board.asDTO()
+        }
+      }
+    }
+    this.lobby.broadcast(boardUpdate);
+    const rackUpdate: ServerResponse = {
+      type: "stateUpdate",
+      stateUpdate: {
+        type: StateUpdateType.Rack,
+        data: null
+      }
+    }
+    this.lobby.broadcast(rackUpdate);
     this.board.print()
   }
 

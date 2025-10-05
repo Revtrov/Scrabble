@@ -17,4 +17,11 @@ export class Cell {
   toString() {
     return `[${this.tile ? this.tile.getLetter() : " "}]`
   }
+  asDTO(){
+    return{
+      i:this.i,
+      j:this.j,
+      tile:this.tile?.asDTO()
+    }
+  }
 }

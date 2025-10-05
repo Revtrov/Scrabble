@@ -12,24 +12,35 @@ export class Rack {
   }
   firstDraw() {
     const drawnTiles: Tile[] = this.tileBag.drawN(this.size)
-    this.tiles.push(...drawnTiles);
-    for (const tile of drawnTiles) {
+    this.addTiles(drawnTiles)
+  }
+  hasTileIds(tileIds: string[]) {
+    return tileIds.every(tileId => this.tileIdMap.has(tileId));
+  }
+  exchange() {
+
+  }
+  fill() {
+    const needed = this.size - this.tiles.length
+    const drawnTiles: Tile[] = this.tileBag.drawN(needed);
+    this.addTiles(drawnTiles)
+  }
+  addTiles(tiles: Tile[]) {
+    this.tiles.push(...tiles);
+    for (const tile of tiles) {
       this.tileIdMap.set(tile.getId(), tile);
     }
   }
-  hasTileIds(tileIds:string[]){
-    return tileIds.every(tileId=>this.tileIdMap.has(tileId));
-  }
-  exchange(){
-
-  }
-  fill(){
-
+  removeTiles(tiles: Tile[]) {
+    for (const tile of tiles) {
+      this.tileIdMap.delete(tile.getId());
+      this.tiles = this.tiles.filter(tileEle => tileEle.getId() != tile.getId())
+    }
   }
   getValue() {
     return this.tiles.reduce((acc, cur) => acc + cur.getValue(), 0)
   }
-  getTileIdMap():Map<string, Tile>{
+  getTileIdMap(): Map<string, Tile> {
     return this.tileIdMap;
   }
   asDTO() {
