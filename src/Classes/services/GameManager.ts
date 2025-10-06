@@ -59,7 +59,10 @@ type TurnActionDTO = z.infer<typeof TurnActionSchema>;
 
 enum TurnActionResult {
   Success = "Success",
-  Failure = "Failure"
+  Failure = "Failure",
+  InvalidWord = "InvalidWord",
+  IllegalTiles = "IllegalTiles",
+  NotPlayersTurn = "NotPlayersTurn"
 }
 
 export class GameManager {
@@ -98,10 +101,10 @@ export class GameManager {
         turnActionResult = this.handleMove(msg.playerId, action.data);
         break;
       case TurnActionId.Exchange:
-        turnActionResult = this.handleExchange(action.data);
+        turnActionResult = this.handleExchange(msg.playerId, action.data);
         break;
       case TurnActionId.Pass:
-        turnActionResult = this.handlePass(action.data);
+        turnActionResult = this.handlePass(msg.playerId, action.data);
         break;
     }
     this.lobby.respondToClient(msg.requestId, msg.clientId, turnActionResult);
@@ -115,13 +118,13 @@ export class GameManager {
     const player = this.lobby.playerIdMap.get(playerId);
     if (player.getId() !== this.turnOrder[this.turnIndex].getId()) {
       console.log(new Error(`Not player ${player.getId()}'s turn`))
-      return TurnActionResult.Failure;
+      return TurnActionResult.NotPlayersTurn;
     }
 
     const playerRack = player.getRack()
     if (!playerRack.hasTileIds(tileIds)) {
       console.log(new Error("Used tiles not in player's Rack"))
-      return TurnActionResult.Failure;
+      return TurnActionResult.IllegalTiles;
     }
     const tiles = tileIds.map(tileId => playerRack.getTileIdMap().get(tileId));
     // this should be sorted on client, maybe should sort here just in case
@@ -129,23 +132,38 @@ export class GameManager {
     const validWord = Dictionary.hasWord(strWord);
     if (!validWord) {
       console.log(new Error(`${strWord} not in Dictionary`))
-      return TurnActionResult.Failure
+      return TurnActionResult.InvalidWord
     };
     // check if connected words too
     // update board
+    let containsTarget = false;
+    if (direction === Direction.Horizontal) {
+      containsTarget = (this.board.getStartIndex().j === startIndex.j) &&
+        (this.board.getStartIndex().i >= startIndex.i) &&
+        (this.board.getStartIndex().i < startIndex.i + tiles.length);
+    } else {
+      containsTarget = (this.board.getStartIndex().i === startIndex.i) &&
+        (this.board.getStartIndex().j >= startIndex.j) &&
+        (this.board.getStartIndex().j < startIndex.j + tiles.length);
+    }
     this.board.placeWord(direction as Direction, startIndex as Coord, tiles);
     playerRack.removeTiles(tiles);
     playerRack.fill()
     return TurnActionResult.Success;
   }
 
-  private handleExchange(exchangeData: z.infer<typeof ExchangeDataSchema>): TurnActionResult {
+  private handleExchange(playerId: string, exchangeData: z.infer<typeof ExchangeDataSchema>): TurnActionResult {
     // remove tiles from rack, draw new ones from bag
     return TurnActionResult.Success;
   }
 
-  private handlePass(_: z.infer<typeof PassDataSchema>): TurnActionResult {
+  private handlePass(playerId: string, _: z.infer<typeof PassDataSchema>): TurnActionResult {
     // maybe track consecutive passes to end the game
+    const player = this.lobby.playerIdMap.get(playerId);
+    if (player.getId() !== this.turnOrder[this.turnIndex].getId()) {
+      console.log(new Error(`Not player ${player.getId()}'s turn`))
+      return TurnActionResult.NotPlayersTurn;
+    }
     return TurnActionResult.Success;
   }
   private broadcastStates() {

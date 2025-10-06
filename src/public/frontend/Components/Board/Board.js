@@ -1,5 +1,4 @@
 import { Square } from '../Cell/Cell.js'
-import { Tile } from '../Tile/Tile.js'
 
 const alphabetLower = Array.from({ length: 26 }, (_, i) =>
   String.fromCharCode(65 + i),
@@ -19,7 +18,7 @@ export class Board {
 
     this.letterIndexesTop = document.createElement('div')
     this.letterIndexesTop.classList.add('LetterIndexes')
-    alphabetLower.slice(0, 15).forEach((char) => {
+    alphabetLower.slice(0, this.sideLength).forEach((char) => {
       const letter = document.createElement('div')
       letter.innerText = char
       this.letterIndexesTop.appendChild(letter)
@@ -29,11 +28,11 @@ export class Board {
 
     this.letterIndexesBottom = this.letterIndexesTop.cloneNode(true);
     this.letterIndexesBottom.classList.add("Bottom")
-    this.root.appendChild(this.letterIndexesBottom.cloneNode(true))
+    this.root.appendChild(this.letterIndexesBottom)
 
     this.numberIndexesLeft = document.createElement('div')
     this.numberIndexesLeft.classList.add('NumberIndexes')
-    Array(15).fill(0).forEach((_, i) => {
+    Array(this.sideLength).fill(0).forEach((_, i) => {
       const num = document.createElement('div')
       num.innerText = i + 1
       this.numberIndexesLeft.appendChild(num)
@@ -44,12 +43,12 @@ export class Board {
     this.numberIndexesRight.classList.add("Right")
     this.root.appendChild(this.numberIndexesRight)
 
-    this.squareGrid = new Array()
     this.squareContainer = document.createElement('div')
     this.squareContainer.classList.add('SquareContainer')
     this.squareContainerFragment = document.createDocumentFragment()
+    this.squareGrid = Array.from({ length: this.sideLength }, () => Array.from({ length: this.sideLength }, () => new Square(this.squareContainer)))
 
-    this.buildCells()
+    // this.buildCells()
 
     // const testTile = new Tile(this.squareGrid[0][0].root, {
     //   letter: 'A',
@@ -68,59 +67,62 @@ export class Board {
     this.fragment.appendChild(this.root)
     this.parentElement.appendChild(this.fragment)
   }
-  buildCells() {
-    const bonuses = {
-      "0,0": "TW", "0,3": "DL", "0,7": "TW",
-      "1,1": "DW", "1,5": "TL",
-      "2,2": "DW", "2,6": "DL",
-      "3,0": "DL", "3,3": "DW", "3,7": "DL",
-      "4,4": "DW",
-      "5,1": "TL", "5,5": "TL",
-      "6,2": "DL", "6,6": "DL",
-      "7,0": "TW", "7,3": "DL", "7,7": "DW"
-    };
 
-    function applySymmetry(i, j, sideLength) {
-      const last = sideLength - 1;
-      return [
-        [i, j],
-        [last - i, j],
-        [i, last - j],
-        [last - i, last - j]
-      ];
-    }
-
-    for (let i = 0; i < 15; i++) {
-      this.squareGrid.push([]);
-      for (let j = 0; j < 15; j++) {
-        let bonus = null;
-
-        for (const [coord, type] of Object.entries(bonuses)) {
-          const [x, y] = coord.split(",").map(Number);
-          for (const [xi, yj] of applySymmetry(x, y, 15)) {
-            if (xi === i && yj === j) bonus = type;
-          }
-        }
-
-        let square = new Square(this.squareContainerFragment, bonus, i, j);
-        this.squareGrid[i].push(square);
-      }
-    }
-  }
   async fetchState() {
 
   }
+  setNumIndexes() {
+    this.numberIndexesLeft.innerHTML = ""
+    this.numberIndexesRight.innerHTML = ""
+    Array(this.sideLength).fill(0).forEach((_, i) => {
+      const num = document.createElement('div')
+      num.innerText = i + 1
+      this.numberIndexesLeft.appendChild(num.cloneNode(true))
+      this.numberIndexesRight.appendChild(num.cloneNode(true))
+    })
+  }
+  setLetterIndexes() {
+    this.letterIndexesTop.innerHTML = ""
+    this.letterIndexesBottom.innerHTML = ""
+    Array(this.sideLength).fill(0).forEach((_, i) => {
+      const index = document.createElement('div')
+      const letter = alphabetLower[i % alphabetLower.length];
+      const repeat = Math.floor(i / alphabetLower.length);
+      index.innerText = letter + (repeat > 0 ? repeat : "");
+      this.letterIndexesTop.appendChild(index.cloneNode(true))
+      this.letterIndexesBottom.appendChild(index.cloneNode(true))
+    }) 
+  }
   async updateState(msg) {
-    console.log(msg)
     const boardState = msg?.stateUpdate?.data?.board
-
     if (!boardState) throw new Error("Invalid boardState");
-    for (let i = 0; i < boardState.length; i++) {
-      for (let j = 0; j < boardState.length; j++) {
-        const tileData = boardState[i][j].tile;
-        this.squareGrid[i][j].setTile(tileData);
+    this.squareContainer.innerHTML = ""
+    this.sideLength = boardState.sideLength
+    this.setNumIndexes()
+    this.setLetterIndexes()
+    document.documentElement.style.setProperty('--board-size', boardState.sideLength);
+    this.squareGrid = Array.from({ length: boardState.sideLength }, () => Array.from({ length: boardState.sideLength }, () => new Square(this.squareContainer)))
+
+    for (let i = 0; i < boardState.grid.length; i++) {
+      for (let j = 0; j < boardState.grid.length; j++) {
+        this.squareGrid[i][j].updateState(boardState.grid[i][j]);
       }
     }
     // get state here and iter grid and reset cell.tile
+  }
+  showPlacementError() {
+    console.log("Check")
+    for (let i = 0; i < this.squareGrid.length; i++) {
+      for (let j = 0; j < this.squareGrid[i].length; j++) {
+        const tile = this.squareGrid[i][j].tile;
+        console.log(tile)
+        if (tile && tile.fromRack) {
+          tile.root.classList.toggle("Error", true)
+          setTimeout(() => {
+            tile.root.classList.toggle("Error", false)
+          }, 1000)
+        }
+      }
+    }
   }
 }

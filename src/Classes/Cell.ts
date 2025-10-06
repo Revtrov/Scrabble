@@ -1,12 +1,21 @@
 import { Tile } from "./Tile";
 
+export enum Bonus{
+  TW = "TW",
+  DW = "DW",
+  TL = "TL",
+  DL = "DL"
+}
+
 export class Cell {
   private i: number;
   private j: number;
   private tile?: Tile;
-  constructor(i: number, j: number) {
+  private bonus:Bonus
+  constructor(i: number, j: number, bonus:Bonus) {
     this.i = i;
     this.j = j;
+    this.bonus = bonus
   }
   getTile(): Tile | undefined {
     return this.tile;
@@ -21,6 +30,7 @@ export class Cell {
     return{
       i:this.i,
       j:this.j,
+      bonus:this.bonus,
       tile:this.tile?.asDTO()
     }
   }

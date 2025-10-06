@@ -10,6 +10,9 @@ import { TurnIndicator } from "../Components/TurnIndicator/TurnIndicator.js";
 export const TurnActionResult = Object.freeze({
   Success: "Success",
   Failure: "Failure",
+  NotPlayersTurn: "NotPlayersTurn",
+  IllegalTiles: "IllegalTiles",
+  InvalidWord: "InvalidWord"
 })
 
 export const Direction = Object.freeze({
@@ -47,6 +50,7 @@ export class GameManager {
 
   static async sendMove() {
     const unvalidatedWord = this.rack.getPlacedWord()
+    console.log(unvalidatedWord)
     if (!unvalidatedWord.length) return;
     const sameRow = unvalidatedWord.every(tile => tile.cell.i === unvalidatedWord[0].cell.i);
     const sameCol = unvalidatedWord.every(tile => tile.cell.j === unvalidatedWord[0].cell.j);
@@ -69,10 +73,18 @@ export class GameManager {
       }
     })
     switch (result.data) {
-      case TurnAction.Failure:
+      case TurnActionResult.NotPlayersTurn:
+        this.turnIndicator.showTurnError();
         // reset turn
         break;
-      case TurnAction.Success:
+      case TurnActionResult.IllegalTiles:
+        // reset turn
+        break;
+      case TurnActionResult.InvalidWord:
+        this.board.showPlacementError();
+        // reset turn
+        break;
+      case TurnActionResult.Success:
         // progress turn
         break;
     }
@@ -80,9 +92,19 @@ export class GameManager {
   }
 
   static async sendPass() {
-    return await this.sendTurnAction({
+    const result = await this.sendTurnAction({
       type: "Pass",
     })
+    switch (result.data) {
+      case TurnActionResult.NotPlayersTurn:
+        this.turnIndicator.showTurnError();
+        // reset turn
+        break;
+      case TurnActionResult.Success:
+        // progress turn
+        break;
+    }
+    return result.data
   }
 
   static async sendExchange(tiles) {

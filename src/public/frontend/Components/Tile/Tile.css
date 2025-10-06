@@ -1,12 +1,12 @@
-:root{
-  --tile-color:#ffdda7;
+:root {
+  --tile-color: #ffdda7;
 }
 
-.Tile{
+.Tile {
   width: 80%;
   max-width: 100%;
   aspect-ratio: 1/1;
-  background:#ffdda7;
+  background: #ffdda7;
   box-shadow: 0 .3vmin 0 0 #ae9772;
   display: grid;
   grid-template-columns: 1fr;
@@ -14,36 +14,72 @@
   border-radius: .5vmin;
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
-  position:relative;
-  margin-bottom:.3vmin;
+  position: relative;
+  margin-bottom: .3vmin;
   cursor: pointer;
   will-change: transform;
-  transition: transform .5s cubic-bezier(0,.21,0,1.83);
+  transition: transform .5s cubic-bezier(0, .21, 0, 1.83);
   user-select: none;
   z-index: 10;
 }
-.Tile:hover{
+
+.Tile:hover {
   transform: scale(1.05);
 }
-.Tile>.Letter{
+
+.Tile>.Letter {
   width: 100%;
   height: 100%;
   display: grid;
   align-content: center;
   justify-content: center;
   font-size: 2.5vmin;
-  font-weight:bold;
+  font-weight: bold;
   box-sizing: border-box;
   padding-bottom: .5vmin;
 }
-.Tile>.Value{
+
+.Tile>.Value {
   position: absolute;
-  bottom:.25vmin;
-  right:.5vmin;
+  bottom: .25vmin;
+  right: .5vmin;
   font-weight: 900;
   display: grid;
   align-content: center;
   justify-content: end;
-  font-size:1vmin;
+  font-size: 1vmin;
   box-sizing: border-box;
+}
+
+.Tile.Error {
+  background: #ffa7a7;
+  box-shadow: 0 .3vmin 0 0 #ae7272;
+  animation: shake 0.4s ease;
+}
+.Tile.dragging{
+  pointer-events: none;
+}
+
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20%,
+  60% {
+    transform: translateX(-.25vmin);
+  }
+
+  40%,
+  80% {
+    transform: translateX(.25vmin);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .Tile.Error {
+    animation: none;
+  }
 }

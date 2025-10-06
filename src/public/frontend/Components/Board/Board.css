@@ -2,6 +2,7 @@
   --board-color: rgb(11, 85, 73);
   --gap-color: white;
   --edge-color: rgb(15, 105, 98);
+  --board-size:15
 }
 .Board {
   background-color: var(--board-color);
@@ -30,7 +31,7 @@
   color: white;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(15, 1fr);
+  grid-template-columns: repeat(var(--board-size), 1fr);
   grid-template-rows: 1fr;
   user-select: none;
 }
@@ -51,7 +52,7 @@
   height: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(15, 1fr);
+  grid-template-rows: repeat(var(--board-size), 1fr);
   user-select: none;
 }
 .Board > .NumberIndexes.Right {
@@ -72,8 +73,8 @@
   width: 100%;
   aspect-ratio: 1/1;
   display: grid;
-  grid-template-columns: repeat(15, 1fr);
-  grid-template-rows: repeat(15, 1fr);
+  grid-template-columns: repeat(var(--board-size), 1fr);
+  grid-template-rows: repeat(var(--board-size), 1fr);
   gap: 0.2vmin;
   padding: 0.2vmin;
   border-radius: 0.5vmin;

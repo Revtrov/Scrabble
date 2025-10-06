@@ -19,22 +19,30 @@ export class SessionConfigurationModal {
     this.lobbyList = document.createElement("div")
     this.lobbyList.classList.add("lobbyList")
     this.lobbyElements = []
-    for(const lobbie of this.lobbies){
+    for (const lobbie of this.lobbies) {
       const lobbyListItem = document.createElement("div")
       lobbyListItem.classList.add("lobbyListItem")
 
       const lobbyListItemCode = document.createElement("div");
       lobbyListItemCode.classList.add("code")
-      lobbyListItemCode.innerText = "Code: " + lobbie.id
+      lobbyListItemCode.innerText = lobbie.id
       lobbyListItem.appendChild(lobbyListItemCode)
-      
+
       const lobbyListItemPlayerCount = document.createElement("div");
-      lobbyListItemPlayerCount.innerText = "Players: "+lobbie.clientCount
+      lobbyListItemPlayerCount.innerText = `${lobbie.clientCount}/${lobbie.maxClientCount}`
       lobbyListItem.appendChild(lobbyListItemPlayerCount)
-      lobbyListItemCode.classList.add("playerCount")
+      lobbyListItemPlayerCount.classList.add("playerCount")
 
       this.lobbyElements.push(lobbyListItem)
       this.lobbyList.appendChild(lobbyListItem)
+      let joinClicked = false;
+      this.lobbyList.onclick = async () => {
+        if (!joinClicked) {
+          const success = await this.sessionManager.joinSession(lobbie.id);
+          if (!success) throw new Error("Session was not found")
+        }
+        joinClicked = true;
+      }
     }
     this.root.appendChild(this.lobbyList)
 
@@ -50,10 +58,10 @@ export class SessionConfigurationModal {
     this.joinLobbyButton.classList.add("joinLobbyButton")
     this.joinLobbyButton.textContent = "Join Lobby"
     let joinClicked = false
-    this.joinLobbyButton.onclick = async ()=>{
-      if(!joinClicked){
+    this.joinLobbyButton.onclick = async () => {
+      if (!joinClicked) {
         const success = await this.sessionManager.joinSession(this.lobbyIdInput.value);
-        if(!success) throw new Error("Session was not found")
+        if (!success) throw new Error("Session was not found")
       }
       joinClicked = true;
     }
@@ -65,10 +73,10 @@ export class SessionConfigurationModal {
     this.createLobbyButton.classList.add("createLobbyButton")
     this.createLobbyButton.textContent = "Create Lobby"
     let createClicked = false
-    this.createLobbyButton.onclick = async ()=>{
-      if(!createClicked){
+    this.createLobbyButton.onclick = async () => {
+      if (!createClicked) {
         const success = await this.sessionManager.createSession();
-        if(!success) throw new Error("Session was not made")
+        if (!success) throw new Error("Session was not made")
       }
       createClicked = true;
     }

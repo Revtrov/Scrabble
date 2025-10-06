@@ -6,7 +6,6 @@ import swaggerJson from "./swagger.json";
 //import { swaggerOptions } from "./swaggerOptions";
 import { SafeWebSocketServer, setupWebSocket } from "./websocket";
 import { fileURLToPath } from "url";
-import { Dictionary } from "./Classes/Dictionary";
 
 
 

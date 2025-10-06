@@ -15,7 +15,6 @@ export class Rack {
     this.root.ondragover = (e) => {
       e.preventDefault()
       e.dataTransfer.dropEffect = 'move'
-      this.onDragOver(e)
     }
     this.root.ondragend = this.root.ondrop = (e) => {
       this.onDrop(e)
@@ -25,43 +24,28 @@ export class Rack {
     this.parentElement.appendChild(this.fragment)
   }
   onDrop(e) {
+    e.preventDefault();
+    //this.root.classList.remove('drag-over');
+
     const tile = tileMap.get(e.dataTransfer.getData(onDragMessage));
     if (!tile) return;
-    if (tile?.parentElement) tile.parentElement.removeChild(tile.root);
-    tile.parentElement = this.root;
-    tile.cell = null;
-    this.root.appendChild(tile.root);
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left);
-    const section = Math.floor((x / (rect.right - rect.left)) * 7);
-
-
-    const index = Math.max(0, Math.min(section, this.root.children.length));
-    if (index >= this.root.children.length) {
-      this.root.appendChild(tile.root);
-    } else {
-      this.root.insertBefore(tile.root, this.root.children[index]);
+    if (tile.parentElement) {
+      if (tile.cell) tile.cell.tile = null;
+      tile.parentElement.removeChild(tile.root);
     }
-  }
-  onDragOver(e) {
-    const tile = tileMap.get(e.dataTransfer.getData(onDragMessage));
-    if (!tile) return;
-    if (tile?.parentElement) tile.parentElement.removeChild(tile.root);
+
     tile.parentElement = this.root;
     tile.cell = null;
-    this.root.appendChild(tile.root);
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left);
-    const section = Math.floor((x / (rect.right - rect.left)) * 7);
+    const rect = this.root.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const section = Math.floor((x / rect.width) * 7);
 
-
-    const index = Math.max(0, Math.min(section, this.root.children.length));
-    if (index >= this.root.children.length) {
+    if (section >= this.root.children.length) {
       this.root.appendChild(tile.root);
     } else {
-      this.root.insertBefore(tile.root, this.root.children[index]);
+      this.root.insertBefore(tile.root, this.root.children[section]);
     }
   }
 
@@ -88,7 +72,7 @@ export class Rack {
       this.setTiles(serverRack.tiles)
     }
   }
-  async updateState(){
+  async updateState() {
     await this.syncState(GameManager.session.lobby);
   }
   getPlacedWord() {

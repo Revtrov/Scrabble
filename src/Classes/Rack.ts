@@ -27,6 +27,7 @@ export class Rack {
   }
   addTiles(tiles: Tile[]) {
     this.tiles.push(...tiles);
+    console.log(tiles)
     for (const tile of tiles) {
       this.tileIdMap.set(tile.getId(), tile);
     }

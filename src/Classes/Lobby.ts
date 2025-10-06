@@ -16,7 +16,7 @@ export class Lobby {
   private clientToPlayerMap: Map<string, Player> = new Map();
   private playerToClientMap: Map<Player, string> = new Map();
   private gameManager: GameManager;
-  private playerSlots: number = 2;
+  private playerSlots: number = 4;
   constructor() {
     this.createPlayers();
     this.gameManager = new GameManager(this, this.players);
@@ -29,7 +29,8 @@ export class Lobby {
     return {
       id: this.id,
       players: Array.from(this.players.values()).map((p) => p.asDTO()),
-      clientCount: this.clients.size
+      clientCount: this.clients.size,
+      maxClientCount:this.players.size
     };
   }
 

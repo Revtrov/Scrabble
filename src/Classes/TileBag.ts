@@ -29,7 +29,7 @@ export class TileBag {
   }
 
   drawN(n: number): Tile[] | [] {
-    return Array.from({ length: n }, () => this.draw()!);
+    return Array.from({ length: Math.min(n, this.tiles.length) }, () => this.draw()!);
   }
 
   tilesRemaining(): number {
