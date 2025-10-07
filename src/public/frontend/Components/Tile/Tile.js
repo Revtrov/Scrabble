@@ -16,6 +16,7 @@ export class Tile {
     this.root.draggable = true
     this.root.ondragstart = (e) => this.onDrag(e)
     this.root.ondragend = (e) => this.onDragEnd(e)
+    this.root.dataset.id = this.data.id;
 
     this.letter = document.createElement('div')
     if (!this.data.letter) throw new Error('data.letter should exist')

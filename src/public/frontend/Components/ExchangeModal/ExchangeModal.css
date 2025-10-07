@@ -2,7 +2,7 @@
   --on-board-dark-color: rgba(0, 0, 0, 0.556);
 }
 
-.sessionModal {
+.ExchangeModal {
   position: fixed;
   left: calc(50% - 30vmin);
   top: calc(50% - 25vmin);
@@ -15,32 +15,90 @@
   justify-items: center;
   gap: 1vmin;
   grid-template-columns: 100%;
+  grid-template-rows: 1fr 3fr 1fr;
+  z-index: 1;
+  box-shadow: 0 0 6vmin rgba(0, 0, 0, 1);
   z-index: 2;
-  box-shadow: 0 0 6vmin rgba(0, 0, 0 , 1);
 }
-.sessionModalBackgroundDim{
-  content:"";
+
+.ExchangeModal.Closed,
+.ExchangeModalBackgroundDim.Closed {
+  display: none;
+}
+
+.ExchangeModalBackgroundDim {
   position: fixed;
   width: 100%;
   height: 100%;
-  background:radial-gradient(rgba(0, 0, 0 , 0.5), rgba(0, 0, 0 , 0.8));
-  top:0;
-  left:0;
+  background: radial-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
+  top: 0;
+  left: 0;
   z-index: 1;
 }
 
-.sessionModal>.title {
+.ExchangeModal>.Title {
   font-size: clamp(2vmin, 3vmin, 4vmin);
   font-family: Arial, Helvetica, sans-serif;
   width: 100%;
   text-align: center;
-  color:white;
+  color: white;
   font-weight: bold;
   letter-spacing: 1vmin;
-  padding:2.5vmin 0vmin;
+  padding: 2.5vmin 0vmin;
   user-select: none;
 }
 
+.ExchangeModal>.ExchangeBay {
+  width: 80%;
+  height: 50%;
+  background: var(--on-board-dark-color);
+  border-radius: 1vmin;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+
+  grid-template-rows: 100%;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  box-sizing: border-box;
+  padding: 0 2vmin;
+}
+.ExchangeModal>.ButtonContainer{
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  gap:1vmin;
+  box-sizing: border-box;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 100%;
+  width: 80%;
+  padding: 1vmin;
+  margin-bottom: 3vmin;
+}
+.ExchangeModal>.ButtonContainer>button {
+  background: var(--tile-color);
+  border-radius: 1vmin;
+  height: 100%;
+  width: 100%;
+  border: none;
+  box-sizing: border-box;
+  padding: 1vmin;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1vmin, 1.25vmin, 2.25vmin);
+  will-change: transform;
+  cursor: pointer;
+}
+.ExchangeModal>.ButtonContainer>button:hover{
+  transform: scale(1.05);
+}
+.ExchangeModal>.ButtonContainer>button:active{
+  transform: scale(1);
+}
+
+/* 
 .lobbyList {
   background: var(--on-board-dark-color);
   width: 70%;
@@ -158,4 +216,4 @@
 
 .createLobbyButton:active {
   transform: scale(1)
-}
+} */

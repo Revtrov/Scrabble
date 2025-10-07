@@ -27,7 +27,6 @@ export class TurnIndicator {
     }
   }
   showTurnError() {
-    console.log("error")
     this.root.classList.toggle("Error", true)
     setTimeout(() => {
       this.root.classList.toggle("Error", false)

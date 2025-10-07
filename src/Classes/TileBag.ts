@@ -1,12 +1,15 @@
 import { Dictionary } from "./Dictionary";
 import { Tile } from "./Tile";
 
+const vowels = new Set(["A", "E", "I", "O", "U"])
 
 export class TileBag {
   private tiles: Array<Tile> = [];
   constructor() {
     for (const [letter, { count, points }] of Dictionary.getDistribution().entries()) {
-      this.tiles.push(new Tile(letter, points))
+      for (let i = 0; i < count; i++) {
+        this.tiles.push(new Tile(letter, points))
+      }
     }
     this.shuffle();
   }
@@ -35,9 +38,11 @@ export class TileBag {
   tilesRemaining(): number {
     return this.tiles.length;
   }
-  asDTO(){
+  asDTO() {
     return {
-      tiles:this.tiles.map(tile=>tile.asDTO()),
+      remainingCount: this.tiles.length,
+      vowelCount: this.tiles.filter(tile => vowels.has(tile.getLetter())).length,
+      consonantCount:this.tiles.filter(tile => !vowels.has(tile.getLetter())).length
     }
   }
 }

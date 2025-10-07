@@ -16,7 +16,7 @@
   font-family: Arial, Helvetica, sans-serif;
   position: relative;
   margin-bottom: .3vmin;
-  cursor: pointer;
+  cursor: grab;
   will-change: transform;
   transition: transform .5s cubic-bezier(0, .21, 0, 1.83);
   user-select: none;
@@ -56,9 +56,9 @@
   box-shadow: 0 .3vmin 0 0 #ae7272;
   animation: shake 0.4s ease;
 }
-.Tile.dragging{
+/* .Tile.dragging{
   pointer-events: none;
-}
+} */
 
 
 @keyframes shake {

@@ -153,6 +153,19 @@ export class GameManager {
   }
 
   private handleExchange(playerId: string, exchangeData: z.infer<typeof ExchangeDataSchema>): TurnActionResult {
+    const player = this.lobby.playerIdMap.get(playerId);
+    if (player.getId() !== this.turnOrder[this.turnIndex].getId()) {
+      console.log(new Error(`Not player ${player.getId()}'s turn`))
+      return TurnActionResult.NotPlayersTurn;
+    }
+
+    const playerRack = player.getRack()
+    if (!playerRack.hasTileIds(exchangeData.tileIds)) {
+      console.log(new Error("Used tiles not in player's Rack"))
+      return TurnActionResult.IllegalTiles;
+    }
+
+    playerRack.exchangeByIds(exchangeData.tileIds);
     // remove tiles from rack, draw new ones from bag
     return TurnActionResult.Success;
   }

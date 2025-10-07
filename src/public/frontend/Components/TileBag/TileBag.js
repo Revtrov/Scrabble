@@ -6,17 +6,6 @@ export class TileBag {
     this.root = document.createElement('div')
     this.root.classList.add('Bag')
 
-    /* Remaining Tile Count */
-    this.tilesLeft = document.createElement('div')
-    this.tilesLeft.classList.add('TilesLeft')
-    this.tilesLeftLabel = document.createElement('div')
-    this.tilesLeftLabel.innerText = 'Tile Bag'
-    this.tilesLeft.appendChild(this.tilesLeftLabel)
-    this.tilesLeftNumber = document.createElement('div')
-    this.tilesLeftNumber.innerText = '0'
-    this.tilesLeft.appendChild(this.tilesLeftNumber)
-    this.root.appendChild(this.tilesLeft)
-
     /* Vowels/Consonants */
     this.letterTypeContainer = document.createElement('div')
     this.letterTypeContainer.classList.add("LetterTypeContainer")
@@ -45,16 +34,24 @@ export class TileBag {
 
     this.root.appendChild(this.letterTypeContainer)
 
-    /* Remaining Tiles */
-    this.remainingLettersContainer = document.createElement('div')
-    this.remainingLettersContainer.classList.add('RemainingLettersContainer')
-    this.root.appendChild(this.remainingLettersContainer)
+    /* Remaining Tile Count */
+    this.tilesLeft = document.createElement('div')
+    this.tilesLeft.classList.add('TilesLeft')
+    this.tilesLeftNumber = document.createElement('div')
+    this.tilesLeftNumber.innerText = '0'
+    this.tilesLeft.appendChild(this.tilesLeftNumber)
+    this.root.appendChild(this.tilesLeft)
 
     this.fragment.appendChild(this.root)
     this.parentElement.appendChild(this.fragment)
   }
 
   async udpateState(msg){
-    console.log(msg);
+    //console.log(msg);
+    if(!msg?.stateUpdate?.data) throw new Error("State had no data")
+    this.tilesLeftNumber.innerText = msg?.stateUpdate?.data?.tileBag?.remainingCount ?? 0;
+    this.consonantsLeftNumber.innerText = msg?.stateUpdate?.data?.tileBag?.consonantCount ?? 0;
+    this.vowelsLeftNumber.innerText = msg?.stateUpdate?.data?.tileBag?.vowelCount ?? 0;
+  
   }
 }

@@ -22,3 +22,7 @@ so either all i match or all j match
 to validate word check ortho dirs until a blank is reached + cur square, check if thats in the word set. if every spoke is either empty or in word set than valid.
 
 points gained in a round = sum of values of words made this round.(words that now contain the newly placed tile)
+
+
+
+npx cloudflared tunnel --url http://localhost:3000

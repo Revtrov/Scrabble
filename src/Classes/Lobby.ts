@@ -16,7 +16,7 @@ export class Lobby {
   private clientToPlayerMap: Map<string, Player> = new Map();
   private playerToClientMap: Map<Player, string> = new Map();
   private gameManager: GameManager;
-  private playerSlots: number = 4;
+  private playerSlots: number = 2;
   constructor() {
     this.createPlayers();
     this.gameManager = new GameManager(this, this.players);

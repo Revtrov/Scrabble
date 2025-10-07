@@ -1,8 +1,6 @@
 import { Player } from "../../Actors/Player.js";
 import { GameManager, TurnActionResult } from "../../Services/GameManager.js";
 
-
-
 export class TurnControls {
   constructor(_parentElement) {
     this.parentElement = _parentElement;
@@ -52,7 +50,7 @@ export class TurnControls {
     await this.sendAction(() => GameManager.sendMove(), () => { }, () => { })
   }
   async exchange() {
-    await this.sendAction(() => GameManager.sendExchange(), () => { }, () => { })
+    GameManager.openExchange()
   }
   async skip() {
     await this.sendAction(() => GameManager.sendPass(), () => { }, () => { })

@@ -17,8 +17,10 @@ export class Rack {
   hasTileIds(tileIds: string[]) {
     return tileIds.every(tileId => this.tileIdMap.has(tileId));
   }
-  exchange() {
-
+  exchangeByIds(tileIds: string[]) {
+    const replacedTiles: Array<Tile> = this.tileBag.redrawTiles(tileIds.map(tileId => this.tileIdMap.get(tileId)));
+    this.removeTilesById(tileIds);
+    this.addTiles(replacedTiles);
   }
   fill() {
     const needed = this.size - this.tiles.length
@@ -36,6 +38,12 @@ export class Rack {
     for (const tile of tiles) {
       this.tileIdMap.delete(tile.getId());
       this.tiles = this.tiles.filter(tileEle => tileEle.getId() != tile.getId())
+    }
+  }
+  removeTilesById(tileIds: string[]) {
+    for (const id of tileIds) {
+      this.tileIdMap.delete(id);
+      this.tiles = this.tiles.filter(tileEle => tileEle.getId() != id)
     }
   }
   getValue() {

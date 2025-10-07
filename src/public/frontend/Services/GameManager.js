@@ -6,6 +6,7 @@ import { Player } from "../Actors/Player.js"
 import { TurnAction } from "../Actors/TurnAction.js";
 import { TurnControls } from "../Components/TurnControls/TurnControls.js";
 import { TurnIndicator } from "../Components/TurnIndicator/TurnIndicator.js";
+import { ExchangeModal } from "../Components/ExchangeModal/ExchangeModal.js";
 
 export const TurnActionResult = Object.freeze({
   Success: "Success",
@@ -28,6 +29,7 @@ export class GameManager {
   static turnIndicator = new TurnIndicator(document.querySelector(".LeftSide"))
   static rack = new Rack(document.querySelector(".LeftSide"))
   static turnControls = new TurnControls(document.querySelector(".LeftSide"))
+  static exchangeModal = new ExchangeModal(document.body);
   static async getSession() {
     this.session = new SessionManager(this)
     if (new URLSearchParams(window.location.search).get('lobbyId')) {
@@ -55,7 +57,10 @@ export class GameManager {
     const sameRow = unvalidatedWord.every(tile => tile.cell.i === unvalidatedWord[0].cell.i);
     const sameCol = unvalidatedWord.every(tile => tile.cell.j === unvalidatedWord[0].cell.j);
     const onSameLine = sameRow || sameCol;
-    if (!onSameLine) throw new Error("tiles must be on the same line")
+    if (!onSameLine) {
+      this.board.showPlacementError();
+      throw new Error("tiles must be on the same line")
+    }
     const sorted = [...unvalidatedWord].sort((a, b) =>
       a.cell.i - b.cell.i || a.cell.j - b.cell.j
     );
@@ -98,6 +103,28 @@ export class GameManager {
     switch (result.data) {
       case TurnActionResult.NotPlayersTurn:
         this.turnIndicator.showTurnError();
+        break;
+      case TurnActionResult.Success:
+        break;
+    }
+    return result.data
+  }
+  static openExchange() {
+    this.exchangeModal.toggle(false)
+  }
+  static async sendExchange(tiles) {
+    const result = await this.sendTurnAction({
+      type: "Exchange",
+      data: {
+        tileIds: tiles.map(tile => tile.data.id)
+      }
+    })
+    switch (result.data) {
+      case TurnActionResult.NotPlayersTurn:
+        this.turnIndicator.showTurnError();
+        // reset turn
+        break;
+      case TurnActionResult.IllegalTiles:
         // reset turn
         break;
       case TurnActionResult.Success:
@@ -105,9 +132,6 @@ export class GameManager {
         break;
     }
     return result.data
-  }
-
-  static async sendExchange(tiles) {
   }
   /**
    * Runs when websocket sends action to session manager

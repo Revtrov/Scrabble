@@ -13,7 +13,7 @@ export class Tile {
   getLetter(): string {
     return this.letter
   }
-  getId():string{
+  getId(): string {
     return this.id;
   }
   fromDTO({ letter }): never {
@@ -24,7 +24,13 @@ export class Tile {
     return {
       letter: this.letter,
       value: this.value,
-      id:this.id
+      id: this.id
     }
+  }
+}
+
+export class BlankTile extends Tile {
+  constructor(letter: string, value: number) {
+    super(letter, value);
   }
 }
