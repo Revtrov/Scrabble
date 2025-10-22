@@ -6,6 +6,7 @@ import { z } from "zod";
 import { TileBag } from "../TileBag";
 import { Dictionary } from "../Dictionary";
 import { Rack } from "../Rack";
+import { Tile } from "../Tile";
 
 enum StateUpdateType {
   TileBag = "TileBag",
@@ -62,7 +63,8 @@ enum TurnActionResult {
   Failure = "Failure",
   InvalidWord = "InvalidWord",
   IllegalTiles = "IllegalTiles",
-  NotPlayersTurn = "NotPlayersTurn"
+  NotPlayersTurn = "NotPlayersTurn",
+  InvalidLocation = "InvalidLocation"
 }
 
 export class GameManager {
@@ -112,6 +114,95 @@ export class GameManager {
       this.advanceTurn();
     }
   }
+  private isValidStartMove(startIndex: Coord, direction: Direction, tiles: Tile[]): boolean {
+    const start = this.board.getStartIndex();
+    let containsStart = false;
+
+    if (direction === Direction.Horizontal) {
+      containsStart =
+        start.i === startIndex.i &&
+        start.j >= startIndex.j &&
+        start.j < startIndex.j + tiles.length;
+    } else {
+      containsStart =
+        start.j === startIndex.j &&
+        start.i >= startIndex.i &&
+        start.i < startIndex.i + tiles.length;
+    }
+    return containsStart;
+  }
+  private getAdjoiningWords(startIndex: Coord, direction: Direction, tiles: Tile[]): Tile[][] {
+  const words: Tile[][] = [];
+
+  // place tiles temporarily (assume placeWord handles intersections)
+  this.board.placeWord(direction, startIndex, tiles);
+
+  const step = (d: Direction, delta: number): [number, number] =>
+    d === Direction.Horizontal ? [0, delta] : [delta, 0];
+
+  const buildWord = (si: number, sj: number, d: Direction): Tile[] => {
+    const [backDi, backDj] = step(d, -1);
+    const [forwDi, forwDj] = step(d, 1);
+
+    // start from the given cell but use local vars
+    let i = si;
+    let j = sj;
+
+    // move backward to the beginning of contiguous tiles
+    while (this.board.isInBounds(i + backDi, j + backDj) &&
+           this.board.getCell(i + backDi, j + backDj)?.getTile()) {
+      i += backDi;
+      j += backDj;
+    }
+
+    // collect forward
+    const word: Tile[] = [];
+    while (this.board.isInBounds(i, j) && this.board.getCell(i, j)?.getTile()) {
+      word.push(this.board.getCell(i, j)!.getTile()!);
+      i += forwDi;
+      j += forwDj;
+    }
+
+    return word;
+  };
+
+  try {
+    // 1) main word: build from the span of the placed tiles
+    const mainWord = buildWord(startIndex.i, startIndex.j, direction);
+    if (mainWord.length > 0) words.push(mainWord);
+
+    // 2) perpendicular words: iterate over the placed span and build only when there's a perpendicular neighbor
+    const perpendicular = direction === Direction.Horizontal ? Direction.Vertical : Direction.Horizontal;
+
+    for (let k = 0; k < tiles.length; k++) {
+      const i = startIndex.i + (direction === Direction.Vertical ? k : 0);
+      const j = startIndex.j + (direction === Direction.Horizontal ? k : 0);
+
+      // skip if cell has no tile (shouldn't after placeWord but safe)
+      const cell = this.board.getCell(i, j);
+      if (!cell || !cell.getTile()) continue;
+
+      // quick check: only build a perpendicular word if there's at least one neighbor along perpendicular axis
+      const [backDi, backDj] = step(perpendicular, -1);
+      const [forwDi, forwDj] = step(perpendicular, 1);
+      const hasNeighbor =
+        (this.board.isInBounds(i + backDi, j + backDj) && this.board.getCell(i + backDi, j + backDj)?.getTile()) ||
+        (this.board.isInBounds(i + forwDi, j + forwDj) && this.board.getCell(i + forwDi, j + forwDj)?.getTile());
+
+      if (!hasNeighbor) continue;
+
+      const word = buildWord(i, j, perpendicular);
+      if (word.length > 1) words.push(word);
+    }
+  } finally {
+    // 3) cleanup - always unplace
+    this.board.unPlaceWord(direction, startIndex, tiles);
+  }
+  return words;
+}
+
+
+
   private handleMove(playerId: string, moveData: z.infer<typeof MoveDataSchema>): TurnActionResult {
     const { direction, startIndex, tileIds } = moveData;
 
@@ -126,26 +217,21 @@ export class GameManager {
       console.log(new Error("Used tiles not in player's Rack"))
       return TurnActionResult.IllegalTiles;
     }
+
     const tiles = tileIds.map(tileId => playerRack.getTileIdMap().get(tileId));
-    // this should be sorted on client, maybe should sort here just in case
-    const strWord = tiles.map(tile => tile.getLetter()).join("");
-    const validWord = Dictionary.hasWord(strWord);
-    if (!validWord) {
-      console.log(new Error(`${strWord} not in Dictionary`))
+
+    const words = this.getAdjoiningWords(startIndex as Coord, direction as Direction, tiles);
+    const wordCheck = words.every(word => Dictionary.hasWord(word.map(tile=>tile.getLetter()).join("")));
+    if (!wordCheck) {
+      console.log(new Error(`not in Dictionary`))
       return TurnActionResult.InvalidWord
     };
+
+    if (this.turnNumber == 0) { // must place word on center on first turn
+      if (!this.isValidStartMove(startIndex as Coord, direction as Direction, tiles)) return TurnActionResult.InvalidLocation;
+    }
     // check if connected words too
     // update board
-    let containsTarget = false;
-    if (direction === Direction.Horizontal) {
-      containsTarget = (this.board.getStartIndex().j === startIndex.j) &&
-        (this.board.getStartIndex().i >= startIndex.i) &&
-        (this.board.getStartIndex().i < startIndex.i + tiles.length);
-    } else {
-      containsTarget = (this.board.getStartIndex().i === startIndex.i) &&
-        (this.board.getStartIndex().j >= startIndex.j) &&
-        (this.board.getStartIndex().j < startIndex.j + tiles.length);
-    }
     this.board.placeWord(direction as Direction, startIndex as Coord, tiles);
     playerRack.removeTiles(tiles);
     playerRack.fill()

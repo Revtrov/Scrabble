@@ -13,7 +13,8 @@ export const TurnActionResult = Object.freeze({
   Failure: "Failure",
   NotPlayersTurn: "NotPlayersTurn",
   IllegalTiles: "IllegalTiles",
-  InvalidWord: "InvalidWord"
+  InvalidWord: "InvalidWord",
+  InvalidLocation: "InvalidLocation"
 })
 
 export const Direction = Object.freeze({
@@ -86,6 +87,10 @@ export class GameManager {
         // reset turn
         break;
       case TurnActionResult.InvalidWord:
+        this.board.showPlacementError();
+        // reset turn
+        break;
+      case TurnActionResult.InvalidLocation:
         this.board.showPlacementError();
         // reset turn
         break;

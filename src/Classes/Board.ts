@@ -5,7 +5,7 @@ import { Tile } from "./Tile";
 export class Board {
   private grid: Cell[][];
   private sideLength: number = 15;
-  private startIndex = { i: 2, j: 2 };
+  private startIndex = { i: 7, j: 7 };
   constructor() {
     const bonuses = {
       "0,0": Bonus.TW, "0,3": Bonus.DL, "0,7": Bonus.TW,
@@ -18,7 +18,7 @@ export class Board {
       "7,0": Bonus.TW, "7,3": Bonus.DL, "7,7": Bonus.DW
     };
 
-    function applySymmetry(i:number, j:number, sideLength:number) {
+    function applySymmetry(i: number, j: number, sideLength: number) {
       const last = sideLength - 1;
       return [
         [i, j],
@@ -45,13 +45,19 @@ export class Board {
       });
     });
   }
+  getCell(i: number, j: number): Cell {
+    return this.grid[i][j];
+  }
   getStartIndex() {
     return this.startIndex;
   }
+  isInBounds(i: number, j: number): boolean {
+    return i < this.sideLength && j < this.sideLength && i > 0 && j > 0;
+  }
   asDTO() {
     return {
-      grid:this.grid.map(row => row.map((cell: Cell) => cell.asDTO())),
-      sideLength:this.sideLength
+      grid: this.grid.map(row => row.map((cell: Cell) => cell.asDTO())),
+      sideLength: this.sideLength
     }
   }
   placeWord(direction: Direction, startIndex: Coord, tiles: Tile[]) {
@@ -65,6 +71,20 @@ export class Board {
       case Direction.Vertical:
         for (let i = startIndex.i; i < startIndex.i + tiles.length; i++) {
           this.grid[i][startIndex.j].setTile(tiles[i - startIndex.i]);
+        }
+        break;
+    }
+  }
+  unPlaceWord(direction: Direction, startIndex: Coord, tiles: Tile[]) {
+    switch (direction) {
+      case Direction.Horizontal:
+        for (let j = startIndex.j; j < startIndex.j + tiles.length; j++) {
+          this.grid[startIndex.i][j].setTile(null);
+        }
+        break;
+      case Direction.Vertical:
+        for (let i = startIndex.i; i < startIndex.i + tiles.length; i++) {
+          this.grid[i][startIndex.j].setTile(null);
         }
         break;
     }
