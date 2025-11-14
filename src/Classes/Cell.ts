@@ -17,10 +17,14 @@ export class Cell {
     this.j = j;
     this.bonus = bonus
   }
+  getBonus(){
+    return this.bonus;
+  }
   getTile(): Tile | undefined {
     return this.tile;
   }
   setTile(tile: Tile) {
+    if(this.tile) console.log("tile is being overwritten")
     this.tile = tile;
   }
   toString() {

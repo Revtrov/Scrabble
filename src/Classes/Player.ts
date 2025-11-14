@@ -9,24 +9,33 @@ export class Player {
   private lobby: Lobby;
   private rack: Rack;
   private id: string = uuid4();
+  private score: number;
   constructor(lobby: Lobby) {
     this.lobby = lobby;
+    this.score = 0;
   }
-  setRack(rack:Rack){
-    this.rack = rack
+  setRack(rack: Rack) {
+    this.rack = rack;
+  }
+  addScore(score: number) {
+    this.score += score;
+  }
+  getScore(){
+    return this.score;
   }
   getRack(): Rack {
     return this.rack;
   }
-  getId():string{
+  getId(): string {
     return this.id;
   }
   // placePiece(tile:Tile, i:number, j:number){
   //   this.lobby.placePiece(this, tile, i, j);
   // }
-  asDTO(){
+  asDTO() {
     return {
-      id:this.id
-    }
+      id: this.id,
+      score:this.score
+    };
   }
 }

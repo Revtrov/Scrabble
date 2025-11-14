@@ -22,7 +22,12 @@ export class TurnIndicator {
       player.classList.add("Player");
       if (i == msg.stateUpdate.data.turnIndex) player.classList.add("IsTurn");
       if (msg.stateUpdate.data.players[i].id == Player.playerId) player.classList.add("IsThisPlayer");
-      player.innerText = `Player ${i + 1}`;
+      const points = document.createElement("div");
+      points.className = "Points"
+      points.innerText = msg.stateUpdate.data.players[i]?.score ?? 0
+      const playerName = document.createElement("div");
+      playerName.innerText = `Player ${i + 1}`
+      player.append(points, playerName)
       this.root.appendChild(player);
     }
   }

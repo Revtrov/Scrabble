@@ -75,7 +75,11 @@ export class GameManager {
       data: {
         direction: sameRow ? Direction.Horizontal : Direction.Vertical,
         startIndex,
-        tileIds: sorted.map(tile => tile.data.id)
+        tiles: sorted.map(tile => ({
+          id: tile.data.id,
+          i: tile.cell.i,
+          j: tile.cell.j
+        }))
       }
     })
     switch (result.data) {

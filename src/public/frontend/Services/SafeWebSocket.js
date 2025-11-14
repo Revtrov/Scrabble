@@ -1,4 +1,4 @@
-const websocket = 'wss://spirit-pdas-layers-only.trycloudflare.com'
+const websocket = 'ws://localhost:3000'
 import { generateUUID } from "./lib.js"
 export default class SafeWebSocket {
   constructor() {

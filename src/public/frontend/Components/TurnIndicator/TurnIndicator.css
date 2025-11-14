@@ -23,11 +23,16 @@
   height: 4vmin;
   width: 100%;
   display: grid;
+  grid-template-columns: 4vmin calc(100% - 4vmin);
   align-items: center;
   justify-content: center;
   position: relative;
 }
-
+.TurnIndicator>.Player>.Points{
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
 .TurnIndicator>.IsTurn {
   box-sizing: border-box;
   border: .2vmin solid white;

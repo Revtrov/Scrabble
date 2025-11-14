@@ -1,5 +1,6 @@
+import z from "zod";
 import { Bonus, Cell } from "./Cell";
-import { Coord, Direction } from "./services/GameManager";
+import { Coord, Direction, TilePlacementSchema } from "./services/GameManager";
 import { Tile } from "./Tile";
 
 export class Board {
@@ -75,6 +76,20 @@ export class Board {
         break;
     }
   }
+  placeTiles( tiles: Tile[], moveDataTiles: z.infer<typeof TilePlacementSchema>[]) {
+    for (let k = 0; k < tiles.length; k++) {
+      const tile = tiles[k];
+      const placement = moveDataTiles[k];
+      const { i, j } = placement;
+
+      if (this.grid[i][j].getTile()) {
+        throw new Error(`Cannot place tile at (${i}, ${j}): cell already occupied`);
+      }
+  
+      this.grid[i][j].setTile(tile);
+    }
+  }
+  
   unPlaceWord(direction: Direction, startIndex: Coord, tiles: Tile[]) {
     switch (direction) {
       case Direction.Horizontal:
