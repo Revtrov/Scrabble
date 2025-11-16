@@ -17,4 +17,5 @@
 }
 .Rack>.Tile{
   transition: all .5s ease;
+  z-index:4
 }
