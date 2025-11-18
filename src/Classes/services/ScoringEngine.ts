@@ -32,7 +32,7 @@ export default class ScoringEngine {
         case Bonus.TL:
           tileScore *= 3;
           break;
-        case Bonus.DW:
+        case Bonus.DW || Bonus.START:
           wordMultiplier *= 2;
           break;
         case Bonus.TW:

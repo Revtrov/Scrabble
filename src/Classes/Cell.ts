@@ -4,7 +4,8 @@ export enum Bonus{
   TW = "TW",
   DW = "DW",
   TL = "TL",
-  DL = "DL"
+  DL = "DL",
+  START = "START",
 }
 
 export class Cell {
@@ -19,6 +20,9 @@ export class Cell {
   }
   getBonus(){
     return this.bonus;
+  }
+  setBonus(bonus:Bonus){
+    this.bonus = bonus;
   }
   getTile(): Tile | undefined {
     return this.tile;

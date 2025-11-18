@@ -59,12 +59,19 @@
 .DL:after {
   content: "DL";
 }
+.START{
+  background: var(--dw-color);
+}
+.START:after{
+  content:"★"
+}
 
 
 .TW:after,
 .DW:after,
 .TL:after,
-.DL:after {
+.DL:after,
+.START:after {
   position: absolute;
   left: 0;
   top: 0;

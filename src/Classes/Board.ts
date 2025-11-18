@@ -5,8 +5,8 @@ import { Tile } from "./Tile";
 
 export class Board {
   private grid: Cell[][];
-  private sideLength: number = 15;
-  private startIndex = { i: 7, j: 7 };
+  private sideLength: number = 19;
+  private startIndex = { i: Math.floor(this.sideLength/2), j: Math.floor(this.sideLength/2) };
   constructor() {
     const bonuses = {
       "0,0": Bonus.TW, "0,3": Bonus.DL, "0,7": Bonus.TW,
@@ -45,6 +45,7 @@ export class Board {
         return new Cell(i, j, bonus);
       });
     });
+    this.grid[this.startIndex.i][this.startIndex.i].setBonus(Bonus.START);
   }
   getCell(i: number, j: number): Cell {
     return this.grid[i][j];

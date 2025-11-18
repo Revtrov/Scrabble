@@ -31,7 +31,7 @@ export class SessionManager {
   }
   async configureSession() {
     const lobbies = await this.fetchLobbyList();
-    const sessionConfigModal = new SessionConfigurationModal(document.body, this, lobbies);
+    const sessionConfigModal = new SessionConfigurationModal(document.body, this, lobbies, this.fetchLobbyList.bind(this));
     return false
   }
   async createSession() {

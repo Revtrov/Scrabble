@@ -24,13 +24,16 @@ export class Lobby {
     lobbyMap.set(this.id, this);
     this.wss = getOrCreateWSS();
   }
+  getClaimedPlayers(): Player[] {
+    return [...this.clientToPlayerMap.values()]
+  }
 
   asDTO() {
     return {
       id: this.id,
       players: Array.from(this.players.values()).map((p) => p.asDTO()),
       clientCount: this.clients.size,
-      maxClientCount:this.players.size
+      maxClientCount: this.players.size
     };
   }
 
@@ -59,12 +62,14 @@ export class Lobby {
     this.clients.add(clientId);
 
     wss.respondToClient(requestId, clientId, playerToAssign.asDTO());
-    this.gameManager.sendStatesToClient(clientId);
+    for (const clientId of this.clients) {
+      this.gameManager.sendStatesToClient(clientId);
+    }
   }
-  respondToClient(requestId:string, clientId:string, data:any){
+  respondToClient(requestId: string, clientId: string, data: any) {
     this.wss.respondToClient(requestId, clientId, data);
   }
-  sendToClient(response:ServerResponse){
+  sendToClient(response: ServerResponse) {
     this.wss.sendToClient(response);
 
   }
@@ -79,10 +84,10 @@ export class Lobby {
   getRacks() {
     return [...this.players.values()].map(player => player.getRack().getValue())
   }
-  getTileBag(){
+  getTileBag() {
     return this.gameManager.getTileBag();
   }
-  getGameManager(){
+  getGameManager() {
     return this.gameManager;
   }
   handleMessage(msg: ServerResponse, wss: SafeWebSocketServer) {
@@ -98,7 +103,7 @@ export class Lobby {
         this.wss.broadcast(msg);
     }
   }
-  broadcast(msg:ServerResponse){
+  broadcast(msg: ServerResponse) {
     this.wss.broadcast(msg)
   }
   handleClientDisconnect(id: string) {

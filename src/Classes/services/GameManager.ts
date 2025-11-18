@@ -314,6 +314,7 @@ export class GameManager {
         type: StateUpdateType.TurnIndicator,
         data: {
           players: this.turnOrder.map((player) => player.asDTO()),
+          claimedPlayers: this.lobby.getClaimedPlayers().map((player) => player.asDTO()),
           turnIndex: this.turnIndex,
         },
       },
@@ -322,7 +323,6 @@ export class GameManager {
   }
   private advanceTurn() {
     this.turnIndex = (this.turnIndex + 1) % this.turnOrder.length;
-    console.log(this.turnIndex);
     this.turnNumber++;
     this.broadcastStates();
     this.board.print();

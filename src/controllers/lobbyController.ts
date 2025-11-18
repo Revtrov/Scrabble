@@ -8,7 +8,6 @@ export const createLobby = (req: Request, res: Response) => {
 
 export const lobbyList = async (req: Request, res: Response) => {
   const lobbyList = [...lobbyMap.values()].map(lobby => lobby.asDTO())
-  console.log(lobbyList.length)
   return res.status(200).json(lobbyList)
 }
 

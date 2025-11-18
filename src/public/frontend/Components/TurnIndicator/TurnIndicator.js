@@ -17,7 +17,8 @@ export class TurnIndicator {
     if (!msg?.stateUpdate?.data.players) throw new Error("no players found");
     if (msg?.stateUpdate?.data.turnIndex == null) throw new Error("no turnIndex found");
     this.root.innerHTML = "";
-    for (let i = 0; i < msg.stateUpdate.data.players.length; i++) {
+    console.log(msg.stateUpdate.data)
+    for (let i = 0; i < msg.stateUpdate.data.claimedPlayers.length; i++) {
       const player = document.createElement("div");
       player.classList.add("Player");
       if (i == msg.stateUpdate.data.turnIndex) player.classList.add("IsTurn");
