@@ -13,6 +13,9 @@ export class Tile {
 
     this.root = document.createElement('div')
     this.root.classList.add('Tile')
+    if(this.data.element){
+      this.root.classList.add(this.data.element)
+    }
     this.root.draggable = true
     this.root.ondragstart = (e) => this.onDrag(e)
     this.root.ondragend = (e) => this.onDragEnd(e)

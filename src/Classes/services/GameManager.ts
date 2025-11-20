@@ -93,7 +93,7 @@ export class GameManager {
     this.scoringEngine = new ScoringEngine(this.board);
   }
 
-  handleTurnAction(msg: ServerResponse) {
+  public handleTurnAction(msg: ServerResponse) {
     if (!msg.turnAction) return;
 
     let action: TurnActionDTO;

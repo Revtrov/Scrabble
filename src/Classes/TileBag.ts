@@ -1,5 +1,5 @@
 import { Dictionary } from "./Dictionary";
-import { Tile } from "./Tile";
+import { Tile, TileElement } from "./Tile";
 
 const vowels = new Set(["A", "E", "I", "O", "U"])
 
@@ -8,7 +8,14 @@ export class TileBag {
   constructor() {
     for (const [letter, { count, points }] of Dictionary.getDistribution().entries()) {
       for (let i = 0; i < count; i++) {
-        this.tiles.push(new Tile(letter, points))
+        const isElemental = Math.random() < 1;
+        if (isElemental) {
+          const possibleElements = Object.values(TileElement);
+          const element = possibleElements[Math.floor(Math.random() * possibleElements.length)];
+          this.tiles.push(new Tile(letter, points, element))
+        } else {
+          this.tiles.push(new Tile(letter, points))
+        }
       }
     }
     this.shuffle();
@@ -42,7 +49,7 @@ export class TileBag {
     return {
       remainingCount: this.tiles.length,
       vowelCount: this.tiles.filter(tile => vowels.has(tile.getLetter())).length,
-      consonantCount:this.tiles.filter(tile => !vowels.has(tile.getLetter())).length
+      consonantCount: this.tiles.filter(tile => !vowels.has(tile.getLetter())).length
     }
   }
 }

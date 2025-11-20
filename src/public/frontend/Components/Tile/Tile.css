@@ -1,9 +1,13 @@
 :root {
   --tile-color: #ffdda7;
+  --tile-earth: rgba(131, 131, 131, 0.363);
+  --tile-wind: #74fffd70;
+  --tile-water: #54a9ff69;
+  --tile-fire: #ff84846c;
 }
 
 .Tile {
-  width: 80%;
+  width: 85%;
   max-width: 100%;
   aspect-ratio: 1/1;
   background: #ffdda7;
@@ -56,9 +60,38 @@
   box-shadow: 0 .3vmin 0 0 #ae7272;
   animation: shake 0.4s ease;
 }
+
 /* .Tile.dragging{
   pointer-events: none;
 } */
+.Tile.Earth,
+.Tile.Wind,
+.Tile.Water,
+.Tile.Fire {
+  aspect-ratio: 1/1.05;
+  clip-path: polygon(
+    2% 4%, 10% 0%, 20% 3%, 30% 0%, 40% 4%, 50% 1%,
+    60% 3%, 70% 0%, 80% 4%, 90% 1%, 98% 3%,
+    100% 10%, 97% 20%, 100% 30%, 96% 40%,
+    100% 50%, 97% 60%, 100% 70%, 96% 80%,
+    100% 90%, 98% 96%, 90% 100%, 80% 97%, 70% 100%,
+    60% 98%, 50% 100%, 40% 97%, 30% 100%, 20% 98%,
+    10% 100%, 4% 97%, 0% 90%, 3% 80%, 0% 70%,
+    4% 60%, 0% 50%, 3% 40%, 0% 30%, 4% 20%, 0% 10%
+  );
+  color: white;
+  text-shadow: 0 .4vmin 1.5vmin darkslategrey;
+  box-shadow: 0 .3vmin 0 0 darkslategrey;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.Tile.Earth { background: url("../../images/earth.jpg") no-repeat center / cover; background-blend-mode: lighten; }
+.Tile.Wind  { background: url("../../images/wind.jpg") no-repeat center / cover; background-blend-mode: overlay; }
+.Tile.Water { background: url("../../images/water.jpg") no-repeat center / cover; background-blend-mode: overlay; }
+.Tile.Fire  { background: url("../../images/fire.jpg") no-repeat center / cover; background-blend-mode: lighten; }
+
 
 
 @keyframes shake {
@@ -78,6 +111,7 @@
     transform: translateX(.25vmin);
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .Tile.Error {
     animation: none;
