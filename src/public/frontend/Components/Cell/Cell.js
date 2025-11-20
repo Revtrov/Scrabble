@@ -27,6 +27,7 @@ export class Square {
     this.root.ondragleave = (e) => {
       this.root.classList.remove('drag-over')
       this.dragOverHighlight = false
+      this.tile = null
     }
 
     this.root.ondrop = (e) => {
@@ -51,11 +52,11 @@ export class Square {
     this.parentElement.appendChild(this.fragment)
   }
 
-  setTile(tileData) {
+  setTile(tileData, fromRack = false) {
     this.root.innerHTML = ""
     this.tile = null
     if (tileData) {
-      this.tile = new Tile(this.root, tileData)
+      this.tile = new Tile(this.root, tileData,fromRack)
     }
   }
   setBonus(bonus){

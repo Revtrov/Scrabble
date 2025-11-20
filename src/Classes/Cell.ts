@@ -1,6 +1,7 @@
+import { Coord } from "./services/GameManager";
 import { Tile } from "./Tile";
 
-export enum Bonus{
+export enum Bonus {
   TW = "TW",
   DW = "DW",
   TL = "TL",
@@ -12,34 +13,37 @@ export class Cell {
   private i: number;
   private j: number;
   private tile?: Tile;
-  private bonus:Bonus
-  constructor(i: number, j: number, bonus:Bonus) {
+  private bonus: Bonus
+  constructor(i: number, j: number, bonus: Bonus) {
     this.i = i;
     this.j = j;
     this.bonus = bonus
   }
-  getBonus(){
+  getCoord() {
+    return { i: this.i, j: this.j } as Coord;
+  }
+  getBonus() {
     return this.bonus;
   }
-  setBonus(bonus:Bonus){
+  setBonus(bonus: Bonus) {
     this.bonus = bonus;
   }
   getTile(): Tile | undefined {
     return this.tile;
   }
-  setTile(tile: Tile) {
-    if(this.tile) console.log("tile is being overwritten")
-    this.tile = tile;
+  setTile(tile: Tile | null) {
+    this.tile = tile ?? undefined;
   }
+
   toString() {
     return `[${this.tile ? this.tile.getLetter() : " "}]`
   }
-  asDTO(){
-    return{
-      i:this.i,
-      j:this.j,
-      bonus:this.bonus,
-      tile:this.tile?.asDTO()
+  asDTO() {
+    return {
+      i: this.i,
+      j: this.j,
+      bonus: this.bonus,
+      tile: this.tile?.asDTO()
     }
   }
 }

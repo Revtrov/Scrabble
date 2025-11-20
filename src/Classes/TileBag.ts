@@ -6,20 +6,36 @@ const vowels = new Set(["A", "E", "I", "O", "U"])
 export class TileBag {
   private tiles: Array<Tile> = [];
   constructor() {
-    for (const [letter, { count, points }] of Dictionary.getDistribution().entries()) {
+    const ELEMENT_COUNT = 30;
+    const elements = Object.values(TileElement);
+    const perElement = ELEMENT_COUNT / elements.length;
+
+    const elementalPool = [];
+    for (const el of elements) {
+      for (let i = 0; i < perElement; i++) {
+        elementalPool.push(el);
+      }
+    }
+
+    for (let i = elementalPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [elementalPool[i], elementalPool[j]] = [elementalPool[j], elementalPool[i]];
+    }
+
+    for (const [letter, { count, points }] of Dictionary.getDistribution()) {
       for (let i = 0; i < count; i++) {
-        const isElemental = Math.random() < 1;
-        if (isElemental) {
-          const possibleElements = Object.values(TileElement);
-          const element = possibleElements[Math.floor(Math.random() * possibleElements.length)];
-          this.tiles.push(new Tile(letter, points, element))
+        if (elementalPool.length > 0) {
+          const element = elementalPool.pop();
+          this.tiles.push(new Tile(letter, points, element));
         } else {
-          this.tiles.push(new Tile(letter, points))
+          this.tiles.push(new Tile(letter, points));
         }
       }
     }
+
     this.shuffle();
   }
+
 
   private shuffle() {
     for (let i = this.tiles.length - 1; i > 0; i--) {

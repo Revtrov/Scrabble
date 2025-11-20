@@ -55,8 +55,8 @@ export class TurnControls {
   async skip() {
     await this.sendAction(() => GameManager.sendPass(), () => { }, () => { })
   }
-  resign() {
+  async resign() {
     console.log(Player.playerId, "resign")
-    // send resign action (not really a turn action)
+    await this.sendAction(() => GameManager.sendResign(), () => { }, () => { })
   }
 }

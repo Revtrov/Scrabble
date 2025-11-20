@@ -2,7 +2,7 @@ import { getOrCreateWSS } from "../server"; ``
 import { SafeWebSocketServer, ServerResponse } from "../websocket";
 import { Dictionary } from "./Dictionary";
 import { Player } from "./Player";
-import { GameManager } from "./services/GameManager";
+import { GameManager, StateUpdateType, TurnActionId } from "./services/GameManager";
 import { v4 as uuid4 } from "uuid";
 
 await Dictionary.init()
@@ -99,14 +99,67 @@ export class Lobby {
         break;
       case "turnAction":
         if (!msg.clientId || !msg.requestId) return;
-        this.gameManager.handleTurnAction(msg)
+        if (msg.turnAction.type == TurnActionId.Resign) {
+          this.handleClientDisconnect(msg.clientId);
+        } else {
+          this.gameManager.handleTurnAction(msg)
+        }
         this.wss.broadcast(msg);
     }
   }
   broadcast(msg: ServerResponse) {
     this.wss.broadcast(msg)
   }
-  handleClientDisconnect(id: string) {
+  handleClientDisconnect(clientId: string) {
+    const player = this.clientToPlayerMap.get(clientId);
+    if (!player) return;
 
+    this.clientToPlayerMap.delete(clientId);
+    this.playerToClientMap.delete(player);
+    this.clients.delete(clientId);
+    const playerDisconnectUpdate: ServerResponse = {
+      type: "stateUpdate",
+      stateUpdate: {
+        type: StateUpdateType.PlayerDisconnect,
+        data: {
+          player: player.asDTO(),
+        },
+      },
+    };
+    this.broadcast(playerDisconnectUpdate);
+
+    // if no clients left, auto-close
+    if (this.clients.size === 0) {
+      this.close();
+    } else {
+      for (const clientId of this.clients) {
+        this.gameManager.sendStatesToClient(clientId);
+      }
+    }
   }
+
+  close() {
+    for (const clientId of this.clients) {
+      const lobbyClosedUpdate: ServerResponse = {
+        type: "stateUpdate",
+        stateUpdate: {
+          type: StateUpdateType.LobbyClosed,
+          data: {},
+        },
+        clientId
+      };
+      this.wss.sendToClient(lobbyClosedUpdate);
+    }
+
+    this.clients.clear();
+    this.clientToPlayerMap.clear();
+    this.playerToClientMap.clear();
+    this.players.clear();
+    this.playerIdMap.clear();
+
+    lobbyMap.delete(this.id);
+
+    console.log(`Lobby ${this.id} closed`);
+  }
+
 }

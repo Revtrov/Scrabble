@@ -13,6 +13,9 @@ export class Tile {
 
     this.root = document.createElement('div')
     this.root.classList.add('Tile')
+    if(!this.fromRack){
+      this.root.classList.add("Fixed")
+    }
     if(this.data.element){
       this.root.classList.add(this.data.element)
     }
@@ -37,6 +40,7 @@ export class Tile {
     this.parentElement.appendChild(this.fragment)
   }
   onDrag(e) {
+    if(!this.fromRack)return;
     this.root.classList.add("dragging");
     // if (this.cell) {
     //   this.cell.tile = null;

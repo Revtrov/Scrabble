@@ -4,7 +4,7 @@
 
 .ExchangeModal {
   position: fixed;
-  left: calc(50% - 30vmin);
+  left: calc(65% - 30vmin);
   top: calc(50% - 25vmin);
   background: var(--board-color);
   height: 50vmin;
@@ -18,7 +18,7 @@
   grid-template-rows: 1fr 3fr 1fr;
   z-index: 1;
   box-shadow: 0 0 6vmin rgba(0, 0, 0, 1);
-  z-index: 2;
+  z-index: 3;
 }
 
 .ExchangeModal.Closed,
@@ -33,7 +33,7 @@
   background: radial-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8));
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 .ExchangeModal>.Title {
@@ -91,129 +91,12 @@
   will-change: transform;
   cursor: pointer;
 }
+.ExchangeModal>.ButtonContainer>.Cancel{
+  background:rgb(231, 126, 131)
+}
 .ExchangeModal>.ButtonContainer>button:hover{
   transform: scale(1.05);
 }
 .ExchangeModal>.ButtonContainer>button:active{
   transform: scale(1);
 }
-
-/* 
-.lobbyList {
-  background: var(--on-board-dark-color);
-  width: 70%;
-  height: 100%;
-  min-height: 10vmin;
-  max-height: 10vmin;
-  border-radius: 1vmin;
-  overflow-y: auto;
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  box-sizing: border-box;
-  padding:.5vmin;
-  display:grid;
-  grid-template-columns: 100%;
-}
-.lobbyListItem{
-  background:rgba(255, 255, 255, .2);
-  border-radius: 1vmin;
-  height: 4vmin;
-  display: grid;
-  grid-template-columns: 80% 20%;
-  grid-template-rows:100%;
-  cursor:pointer;
-  transition: transform .2s ease;
-  will-change: transform;
-}
-.lobbyListItem>*{
-  display: grid;
-  align-items: center;
-  justify-content: start;
-  word-wrap: break-word;
-  grid-template-columns: 100%;
-  grid-template-rows: 100%;
-  box-sizing: border-box;
-  padding: 1vmin;
-}
-.lobbyListItem>.playerCount{
-  justify-items: end;
-}
-.lobbyListItem:hover{
-  transform:scaleY(1.05);
-}
-.lobbyListItem:active{
-  transform:scaleY(1);
-}
-
-.joinContainer {
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  width: 70%;
-  grid-template-columns: 4fr 1fr;
-  grid-template-rows: 100%;
-  height: 6vmin;
-  gap: 1vmin;
-  box-sizing: border-box;
-}
-
-.joinContainer>.lobbyIdInput {
-  background: var(--on-board-dark-color);
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  border: none;
-  border-radius: 1vmin;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 1vmin;
-  width: 100%;
-}
-
-.joinContainer>.joinLobbyButton {
-  background: var(--tile-color);
-  border-radius: 1vmin;
-  height: 100%;
-  width: 100%;
-  border: none;
-  box-sizing: border-box;
-  padding: 1vmin;
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(1vmin, 1.25vmin, 2.25vmin);
-  will-change: transform;
-  cursor: pointer;
-}
-
-.joinContainer>.joinLobbyButton:hover {
-  transform: scale(1.05)
-}
-
-.joinContainer>.joinLobbyButton:active {
-  transform: scale(1)
-}
-
-
-.createLobbyButton {
-  background: var(--tile-color);
-  border-radius: 1vmin;
-  width: 70%;
-  height: 6vmin;
-  border: none;
-  box-sizing: border-box;
-  padding: 1vmin;
-  display: grid;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(1.25vmin, 1.5vmin, 2.5vmin);
-  will-change: transform;
-  cursor: pointer;
-}
-
-.createLobbyButton:hover {
-  transform: scale(1.05)
-}
-
-.createLobbyButton:active {
-  transform: scale(1)
-} */

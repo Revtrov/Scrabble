@@ -42,9 +42,10 @@ export class ExchangeModal {
     this.buttonContainer.appendChild(this.submitButton)
 
     this.cancelButton = document.createElement("button")
+    this.cancelButton.classList.add("Cancel")
     this.cancelButton.innerText = "Cancel";
-    this.cancelButton.onclick = () => {
-      this.toggle(true)
+    this.cancelButton.onclick = async (e) => {
+      this.onCancel(e)
     }
     this.buttonContainer.appendChild(this.cancelButton)
 
@@ -59,6 +60,12 @@ export class ExchangeModal {
   toggle(closed) {
     this.root.classList.toggle("Closed", closed)
     this.exchangeModalBackgroundDim.classList.toggle("Closed", closed)
+  }
+  async onCancel(e){
+    this.tiles.clear()
+    this.exchangeBay.innerHTML = []
+    this.toggle(true)
+    await GameManager.rack.updateState()
   }
 
   onDrop(e) {

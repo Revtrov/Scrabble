@@ -1,6 +1,6 @@
 import { ServerResponse } from "../../websocket";
 import { Board } from "../Board";
-import { Lobby } from "../Lobby";
+import { Lobby, lobbyMap } from "../Lobby";
 import { Player } from "../Player";
 import { z } from "zod";
 import { TileBag } from "../TileBag";
@@ -9,11 +9,14 @@ import { Rack } from "../Rack";
 import { Tile } from "../Tile";
 import ScoringEngine from "./ScoringEngine";
 
-enum StateUpdateType {
+export enum StateUpdateType {
   TileBag = "TileBag",
   Board = "Board",
   Rack = "Rack",
   TurnIndicator = "TurnIndicator",
+  GameEnd = "GameEnd",
+  PlayerDisconnect = "PlayerDisconnect",
+  LobbyClosed = "LobbyClosed"
 }
 export interface StateUpdateBody {
   type: StateUpdateType;
@@ -24,10 +27,11 @@ export interface StateUpdateMessage extends ServerResponse {
   stateUpdate: StateUpdateBody;
 }
 
-enum TurnActionId {
+export enum TurnActionId {
   Move = "Move",
   Exchange = "Exchange",
   Pass = "Pass",
+  Resign = "Resign"
 }
 
 export enum Direction {
@@ -321,15 +325,42 @@ export class GameManager {
     };
     return { tileBagUpdate, boardUpdate, rackUpdate, turnIndicatorUpdate };
   }
+  private winConditionCheck(): Player {
+    return [...this.players.values()].find(p => p.getScore() >= 150) || null;
+  }
+  isPlayersTurn(player: Player) {
+    const currentPlayer = this.turnOrder[this.turnIndex];
+    return currentPlayer == player
+  }
+
   private advanceTurn() {
     this.turnIndex = (this.turnIndex + 1) % this.turnOrder.length;
     this.turnNumber++;
+
+    const winner = this.winConditionCheck();
+    if (winner) {
+      this.gameEnd(winner);
+      return;
+    }
+
+    this.board.applyTileEffects();
+
     this.broadcastStates();
     this.board.print();
   }
 
-  private gameEnd() {
-    //this.lobby.closeLobby();
+  public gameEnd(winner: Player) {
+    const winnerUpdate: ServerResponse = {
+      type: "stateUpdate",
+      stateUpdate: {
+        type: StateUpdateType.GameEnd,
+        data: {
+          winner: winner.asDTO(),
+        },
+      },
+    };
+    this.lobby.broadcast(winnerUpdate);
+    this.lobby.close();
   }
   public getTileBag() {
     return this.tileBag;

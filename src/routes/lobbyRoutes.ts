@@ -24,6 +24,11 @@ router.get("/:lobbyId/player/:playerId/rack", lobbyController.getPlayerRack);
 
 
 /**
+ * Check if its players turn
+ */
+router.get("/:lobbyId/player/:playerId/is-players-turn", lobbyController.isPlayersTurn);
+
+/**
  * Get TileBag
  */
 router.get("/:lobbyId/tilebag", lobbyController.getTileBag);

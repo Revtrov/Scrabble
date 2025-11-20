@@ -26,3 +26,21 @@ points gained in a round = sum of values of words made this round.(words that no
 
 
 npx cloudflared tunnel --url http://localhost:3000
+
+
+Implement blank tile
+
+implement fire tile
+flamewall
+tiles in area are burnt
+tiles cannot be placed over the wall
+
+implement water tile
+remove any effects within its zone
+
+implement wind tile
+rotate tiles in radius every turn by one
+
+implement earth tile
+The Grey
+tiles placed in range wont give score

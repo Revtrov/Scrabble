@@ -26,6 +26,10 @@
   user-select: none;
   z-index: 2;
 }
+.Tile.Fixed{
+  pointer-events: none;
+  cursor: not-allowed;
+}
 
 .Tile:hover {
   transform: scale(1.05);
@@ -85,6 +89,52 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.Square:has(.Tile.Fire)::before{
+  content: "";
+  position:absolute;
+  left:0;
+  top:calc(50% - 50vh);
+  background:rgba(255, 89, 43, 0.767);
+  width: 100%;
+  height: 100vh;
+  z-index:1;
+  pointer-events: none;
+}
+.Square:has(.Tile.Earth)::before{
+  content: "";
+  position:absolute;
+  background:rgba(56, 56, 56, 0.507);
+  left:calc(-100% - .2vmin);
+  top:calc(-100% - .2vmin);
+  width: calc(300% + .4vmin);
+  height: calc(300% + .4vmin);
+  z-index:1;
+  pointer-events: none;
+}
+.Square:has(.Tile.Water)::before{
+  content: "";
+  background:rgba(57, 120, 255, 0.621);
+  position:absolute;
+  left:calc(-200% - .4vmin);
+  top:calc(-200% - .4vmin);
+  width: calc(500% + .8vmin);
+  height: calc(500% + .8vmin);
+  z-index:1;
+  pointer-events: none;
+}
+.Square:has(.Tile.Wind)::before{
+  content: "";
+  background:rgba(44, 230, 221, 0.671);
+  position:absolute;
+  left:calc(-100% - .2vmin);
+  top:calc(-100% - .2vmin);
+  width: calc(300% + .4vmin);
+  height: calc(300% + .4vmin);
+  border-radius: 50%;
+  z-index:1;
+  pointer-events: none;
 }
 
 .Tile.Earth { background: url("../../images/earth.jpg") no-repeat center / cover; background-blend-mode: lighten; }

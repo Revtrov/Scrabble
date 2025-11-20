@@ -17,8 +17,8 @@ export class SessionManager {
     try {
       const res = await this.ws.request({ type: 'connect', clientId: this.id })
       //this.ws.on('updaterequired', () => this.refreshBoardState());
-      this.ws.on("turnAction", (msg)=>this.gameManager.handleTurnAction(msg))
-      this.ws.on("stateUpdate", (msg)=>this.gameManager.handleStateUpdate(msg))
+      this.ws.on("turnAction", (msg) => this.gameManager.handleTurnAction(msg))
+      this.ws.on("stateUpdate", (msg) => this.gameManager.handleStateUpdate(msg))
       return true
     } catch (err) {
       console.error('Connection timed out:', err)
@@ -88,11 +88,16 @@ export class SessionManager {
     })
     return data
   }
+  async isPlayersTurn() {
+    const res = await fetch(api + '/lobby/' + this.lobby.id + "/player/" + Player.playerId + "/is-players-turn")
+    return await res.json(res)
+  }
   async fetchLobby() {
     const res = await fetch(api + '/lobby/' + this.lobby.id)
     this.lobby = await res.json()
     return this.lobby
   }
+
   async fetchBoardState() {
 
   }

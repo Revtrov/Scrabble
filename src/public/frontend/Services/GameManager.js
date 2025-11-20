@@ -52,8 +52,9 @@ export class GameManager {
   }
 
   static async sendMove() {
+    const isPlayersTurn = await this.session.isPlayersTurn();
+    if (!isPlayersTurn) return;
     const unvalidatedWord = this.rack.getPlacedWord()
-    console.log(unvalidatedWord)
     if (!unvalidatedWord.length) return;
     const sameRow = unvalidatedWord.every(tile => tile.cell.i === unvalidatedWord[0].cell.i);
     const sameCol = unvalidatedWord.every(tile => tile.cell.j === unvalidatedWord[0].cell.j);
@@ -85,18 +86,14 @@ export class GameManager {
     switch (result.data) {
       case TurnActionResult.NotPlayersTurn:
         this.turnIndicator.showTurnError();
-        // reset turn
         break;
       case TurnActionResult.IllegalTiles:
-        // reset turn
         break;
       case TurnActionResult.InvalidWord:
         this.board.showPlacementError();
-        // reset turn
         break;
       case TurnActionResult.InvalidLocation:
         this.board.showPlacementError();
-        // reset turn
         break;
       case TurnActionResult.Success:
         // progress turn
@@ -118,7 +115,15 @@ export class GameManager {
     }
     return result.data
   }
-  static openExchange() {
+  static async sendResign() {
+    const result = await this.sendTurnAction({
+      type: "Resign",
+    })
+    window.location.href = ""
+  }
+  static async openExchange() {
+    const isPlayersTurn = await this.session.isPlayersTurn();
+    if (!isPlayersTurn) return;
     this.exchangeModal.toggle(false)
   }
   static async sendExchange(tiles) {
@@ -164,6 +169,13 @@ export class GameManager {
       case "TurnIndicator":
         await this.turnIndicator.updateState(msg);
         break;
+      case "PlayerDisconnect":
+        const didYouLeave = msg.stateUpdate.data.player.id == Player.playerId
+        alert(`${didYouLeave ? "You" : msg.stateUpdate.data.player.id} left.`)
+      case "GameEnd":
+        const didYouWin = msg.stateUpdate.data.winner.id == Player.playerId
+        alert(`Game Over\n${didYouWin ? "You Won!" : "You Lost"}`);
+        location.href = ""
     }
     // identify whether to act on broadcast
     // (message from this client)?
