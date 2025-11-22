@@ -326,7 +326,7 @@ export class GameManager {
     return { tileBagUpdate, boardUpdate, rackUpdate, turnIndicatorUpdate };
   }
   private winConditionCheck(): Player {
-    return [...this.players.values()].find(p => p.getScore() >= 150) || null;
+    return [...this.players.values()].find(p => p.getScore() >= 100) || null;
   }
   isPlayersTurn(player: Player) {
     const currentPlayer = this.turnOrder[this.turnIndex];
@@ -343,7 +343,7 @@ export class GameManager {
       return;
     }
 
-    this.board.applyTileEffects();
+    this.board.applyTileEffects(this.tileBag);
 
     this.broadcastStates();
     this.board.print();

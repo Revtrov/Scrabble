@@ -43,6 +43,10 @@ export class TileBag {
       [this.tiles[i], this.tiles[j]] = [this.tiles[j], this.tiles[i]];
     }
   }
+  public insertTile(tile:Tile){
+    this.tiles.push(tile);
+    this.shuffle()
+  }
 
   redrawTiles(discarded: Array<Tile>): Array<Tile> {
     this.tiles.push(...discarded)

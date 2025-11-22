@@ -24,6 +24,9 @@ export class Tile {
   getValue(): number {
     return this.value
   }
+  setValue(value:number){
+    this.value = value
+  }
   getLetter(): string {
     return this.letter
   }

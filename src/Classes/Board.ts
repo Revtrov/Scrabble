@@ -1,7 +1,8 @@
 import z from "zod";
 import { Bonus, Cell } from "./Cell";
-import { Coord, Direction, TilePlacementSchema } from "./services/GameManager";
+import { Coord, Direction, GameManager, TilePlacementSchema } from "./services/GameManager";
 import { Tile, TileElement } from "./Tile";
+import { TileBag } from "./TileBag";
 
 export class Board {
   private grid: Cell[][];
@@ -9,14 +10,24 @@ export class Board {
   private startIndex = { i: Math.floor(this.sideLength / 2), j: Math.floor(this.sideLength / 2) };
   constructor() {
     const bonuses = {
-      "0,0": Bonus.TW, "0,3": Bonus.DL, "0,7": Bonus.TW,
-      "1,1": Bonus.DW, "1,5": Bonus.TL,
-      "2,2": Bonus.DW, "2,6": Bonus.DL,
-      "3,0": Bonus.DL, "3,3": Bonus.DW, "3,7": Bonus.DL,
+      "0,0": Bonus.TW,
+      "0,3": Bonus.DL,
+      "0,7": Bonus.TW,
+      "1,1": Bonus.DW,
+      "1,5": Bonus.TL,
+      "2,2": Bonus.DW,
+      "2,6": Bonus.DL,
+      "3,0": Bonus.DL,
+      "3,3": Bonus.DW,
+      "3,7": Bonus.DL,
       "4,4": Bonus.DW,
-      "5,1": Bonus.TL, "5,5": Bonus.TL,
-      "6,2": Bonus.DL, "6,6": Bonus.DL,
-      "7,0": Bonus.TW, "7,3": Bonus.DL, "7,7": Bonus.DW
+      "5,1": Bonus.TL,
+      "5,5": Bonus.TL,
+      "6,2": Bonus.DL,
+      "6,6": Bonus.DL,
+      "7,0": Bonus.TW,
+      "7,3": Bonus.DL,
+      "7,7": Bonus.DW,
     };
 
     function applySymmetry(i: number, j: number, sideLength: number) {
@@ -25,7 +36,7 @@ export class Board {
         [i, j],
         [last - i, j],
         [i, last - j],
-        [last - i, last - j]
+        [last - i, last - j],
       ];
     }
 
@@ -58,9 +69,9 @@ export class Board {
   }
   asDTO() {
     return {
-      grid: this.grid.map(row => row.map((cell: Cell) => cell.asDTO())),
-      sideLength: this.sideLength
-    }
+      grid: this.grid.map((row) => row.map((cell: Cell) => cell.asDTO())),
+      sideLength: this.sideLength,
+    };
   }
   placeWord(direction: Direction, startIndex: Coord, tiles: Tile[]) {
     // need to return failure on trying to place word on other word.
@@ -105,83 +116,111 @@ export class Board {
         break;
     }
   }
-  private rotateImmediateTiles(index: Coord) {
-    console.log(`--- rotateImmediateTiles @ (${index.i}, ${index.j}) ---`);
-
+  private rotateImmediateTiles(index: Coord, blocked: Set<Cell>) {
     const { i, j } = index;
     const maxI = this.grid.length;
     const maxJ = this.grid[0].length;
 
-    // Neighbour positions in clockwise order starting top-left
     const ring = [
-      [-1, -1], [0, -1], [1, -1],
+      [-1, -1],
+      [0, -1],
+      [1, -1],
       [1, 0],
-      [1, 1], [0, 1], [-1, 1],
+      [1, 1],
+      [0, 1],
+      [-1, 1],
       [-1, 0],
     ];
 
-    // Collect the 8 neighbouring cells as slots
-    const slots: { pos: [number, number]; tile: Tile | null }[] = [];
+    const slots: { cell: Cell; tile: Tile | null }[] = [];
 
-    console.log("Scanning neighbours:");
     for (const [di, dj] of ring) {
       const ni = i + di;
       const nj = j + dj;
 
-      if (ni >= 0 && ni < maxI && nj >= 0 && nj < maxJ) {
-        const cell = this.grid[ni][nj];
-        const tile = cell.getTile() ?? null;
-        console.log(`  neighbour (${ni}, ${nj}) -> ${tile ? tile.getLetter() : "empty"}`);
-        slots.push({ pos: [ni, nj], tile });
-      } else {
-        console.log(`  neighbour (${ni}, ${nj}) -> out of bounds`);
-      }
+      if (ni < 0 || ni >= maxI || nj < 0 || nj >= maxJ) continue;
+
+      const cell = this.grid[ni][nj];
+      if (blocked.has(cell)) continue;
+
+      slots.push({ cell, tile: cell.getTile() ?? null });
     }
 
-    if (slots.length === 0) {
-      console.log("No valid neighbours to rotate.\n");
-      return;
-    }
+    if (slots.length < 2) return;
 
-    console.log("Before rotation:");
-    console.log(slots.map(s => ({ pos: s.pos, tile: s.tile ? s.tile.getLetter() : "empty" })));
-
-    // Rotate right by 1: move last tile to first, shift others forward
-    // Rotate clockwise by 1: each slot gets the tile from the next slot
     const rotatedTiles = slots.map((_, idx) => slots[(idx + 1) % slots.length].tile);
 
-    // Assign rotated tiles back to the slots
     slots.forEach((slot, idx) => {
-      const tile = rotatedTiles[idx];
-      console.log(`  set (${slot.pos[0]}, ${slot.pos[1]}) = ${tile ? tile.getLetter() : null}`);
-      this.grid[slot.pos[0]][slot.pos[1]].setTile(tile);
+      slot.cell.setTile(rotatedTiles[idx]);
     });
-
-
-    console.log("--- rotation complete ---\n");
   }
 
-
-  public applyTileEffects() {
-    const cells = this.grid.flat()
-    const windOriginCells = cells.filter(cell => cell.getTile()?.getElement() == TileElement.Wind)
-    const earthOriginCells = cells.filter(cell => cell.getTile()?.getElement() == TileElement.Earth)
-    const fireOriginCells = cells.filter(cell => cell.getTile()?.getElement() == TileElement.Fire)
-    const waterOriginCells = cells.filter(cell => cell.getTile()?.getElement() == TileElement.Water)
-    for (const cell of windOriginCells) {
-      this.rotateImmediateTiles(cell.getCoord());
-    }
-  }
-  print() {
-    let gridStr = ""
-    for (const row of this.grid) {
-      let rowStr = ""
-      for (const col of row) {
-        rowStr += col.toString()
+  private neighbouringCells(index: Coord, range: number = 1) {
+    const { i, j } = index;
+    const list: Cell[] = [];
+    for (let di = -range; di <= range; di++) {
+      for (let dj = -range; dj <= range; dj++) {
+        if (di === 0 && dj === 0) continue;
+        const ni = i + di;
+        const nj = j + dj;
+        if (!this.grid[ni] || !this.grid[ni][nj]) continue;
+        list.push(this.grid[ni][nj]);
       }
-      rowStr += "\n"
-      gridStr += rowStr
     }
-    console.log(gridStr)
+    return list;
+  }
+  private getFile(index: Coord): Cell[] {
+    return this.grid.map((rank) => rank[index.j]);
+  }
+  private groundTiles(tiles: Tile[]) {
+    for (const tile of tiles) {
+      tile.setValue(0);
+    }
+  }
+  private reclaimTilesFromCells(cells: Cell[], tileBag: TileBag) {
+    for (const cell of cells) {
+      const tile = cell.getTile();
+      if (tile) {
+        tileBag.insertTile(tile);
+        cell.setTile(null);
+      }
+    }
+  }
+
+  public applyTileEffects(tileBag: TileBag) {
+    const cells = this.grid.flat();
+
+    const waterOrigins = cells.filter((c) => c.getTile()?.getElement() === TileElement.Water);
+
+    const waterEffected = new Set<Cell>(waterOrigins.flatMap((origin) => this.neighbouringCells(origin.getCoord(), 2)));
+
+    const windOrigins = cells.filter((c) => c.getTile()?.getElement() === TileElement.Wind);
+
+    for (const cell of windOrigins) {
+      if (waterEffected.has(cell)) continue;
+      this.rotateImmediateTiles(cell.getCoord(), waterEffected);
+    }
+
+    const earthOrigins = cells.filter((c) => c.getTile()?.getElement() === TileElement.Earth);
+    const earthEffected = new Set<Cell>(earthOrigins.filter((cell) => !waterEffected.has(cell)).flatMap((fCell) => this.neighbouringCells(fCell.getCoord(), 1)));
+    const groundedTiles = [...earthEffected.values()].filter((cell) => cell.getTile()).map((fCell) => fCell.getTile());
+    this.groundTiles(groundedTiles);
+
+    const fireOrigins = cells.filter((c) => c.getTile()?.getElement() === TileElement.Fire);
+    const fireEffected = new Set<Cell>(fireOrigins.filter((origin) => !waterEffected.has(origin)).flatMap((fCell) => this.getFile(fCell.getCoord()).filter((fileCell) => fileCell !== fCell && !waterEffected.has(fileCell))));
+    this.reclaimTilesFromCells([...fireEffected], tileBag);
+  }
+
+  print() {
+    let gridStr = "";
+    for (const row of this.grid) {
+      let rowStr = "";
+      for (const col of row) {
+        rowStr += col.toString();
+      }
+      rowStr += "\n";
+      gridStr += rowStr;
+    }
+    console.log(gridStr);
   }
 }

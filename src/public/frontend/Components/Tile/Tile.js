@@ -26,7 +26,7 @@ export class Tile {
 
     this.letter = document.createElement('div')
     if (!this.data.letter) throw new Error('data.letter should exist')
-    this.letter.innerText = this.data.value == 0 ? " " : this.data.letter
+    this.letter.innerText = this.data.letter == "BLANK" ? " " : this.data.letter
     this.letter.classList.add('Letter')
     this.root.appendChild(this.letter)
 
