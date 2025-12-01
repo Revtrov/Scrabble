@@ -42,10 +42,6 @@ export class Tile {
   onDrag(e) {
     if(!this.fromRack)return;
     this.root.classList.add("dragging");
-    // if (this.cell) {
-    //   this.cell.tile = null;
-    //   //this.cell.root.classList.toggle("contains", false)
-    // }
     e.dataTransfer.setData(onDragMessage, this.data.id)
   }
   onDragEnd(e) {

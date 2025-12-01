@@ -267,7 +267,6 @@ export class GameManager {
   }
 
   private handlePass(playerId: string, _: z.infer<typeof PassDataSchema>): TurnActionResult {
-    // maybe track consecutive passes to end the game
     const player = this.lobby.playerIdMap.get(playerId);
     if (player.getId() !== this.turnOrder[this.turnIndex].getId()) {
       console.log(new Error(`Not player ${player.getId()}'s turn`));

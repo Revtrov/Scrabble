@@ -6,7 +6,6 @@ export class TileBag {
     this.root = document.createElement('div')
     this.root.classList.add('Bag')
 
-    /* Vowels/Consonants */
     this.letterTypeContainer = document.createElement('div')
     this.letterTypeContainer.classList.add("LetterTypeContainer")
 
@@ -34,7 +33,6 @@ export class TileBag {
 
     this.root.appendChild(this.letterTypeContainer)
 
-    /* Remaining Tile Count */
     this.tilesLeft = document.createElement('div')
     this.tilesLeft.classList.add('TilesLeft')
     this.tilesLeftNumber = document.createElement('div')
@@ -47,7 +45,6 @@ export class TileBag {
   }
 
   async udpateState(msg){
-    //console.log(msg);
     if(!msg?.stateUpdate?.data) throw new Error("State had no data")
     this.tilesLeftNumber.innerText = msg?.stateUpdate?.data?.tileBag?.remainingCount ?? 0;
     this.consonantsLeftNumber.innerText = msg?.stateUpdate?.data?.tileBag?.consonantCount ?? 0;

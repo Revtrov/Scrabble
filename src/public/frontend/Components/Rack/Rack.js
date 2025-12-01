@@ -25,7 +25,6 @@ export class Rack {
   }
   onDrop(e) {
     e.preventDefault();
-    //this.root.classList.remove('drag-over');
 
     const tile = tileMap.get(e.dataTransfer.getData(onDragMessage));
     if (!tile) return;

@@ -48,13 +48,6 @@ export class Board {
     this.squareContainerFragment = document.createDocumentFragment()
     this.squareGrid = Array.from({ length: this.sideLength }, () => Array.from({ length: this.sideLength }, () => new Square(this.squareContainer)))
 
-    // this.buildCells()
-
-    // const testTile = new Tile(this.squareGrid[0][0].root, {
-    //   letter: 'A',
-    //   value: '1',
-    //   id: '123123123',
-    // })
     this.squareContainer.appendChild(this.squareContainerFragment)
     this.root.appendChild(this.squareContainer)
 
@@ -108,7 +101,6 @@ export class Board {
         this.squareGrid[i][j].updateState(boardState.grid[i][j]);
       }
     }
-    // get state here and iter grid and reset cell.tile
   }
   showPlacementError() {
     console.log("Check")

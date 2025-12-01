@@ -1,9 +1,6 @@
 import path from "path";
 import express from "express";
 import routes from "./routes/index";
-import swaggerUi from "swagger-ui-express";
-import swaggerJson from "./swagger.json";
-//import { swaggerOptions } from "./swaggerOptions";
 import { SafeWebSocketServer, setupWebSocket } from "./websocket";
 import { fileURLToPath } from "url";
 
@@ -33,7 +30,6 @@ export function getOrCreateWSS(): SafeWebSocketServer {
 
 app.use(express.json());
 
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerJson));
 
 app.use("/api", routes);
 

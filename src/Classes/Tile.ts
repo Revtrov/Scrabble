@@ -34,7 +34,6 @@ export class Tile {
     return this.id;
   }
   fromDTO({ letter }): never {
-    // letters value from dict
     throw new Error("Tile.fromDTO Not implemented")
   }
   asDTO() {

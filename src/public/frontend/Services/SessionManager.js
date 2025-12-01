@@ -1,6 +1,6 @@
 import SafeWebSocket from './SafeWebSocket.js'
 import { SessionConfigurationModal } from '../Components/SessionConfiguration/SessionConfiguration.js'
-export const api = 'http://localhost:3000/api' // 'http://localhost:3000/api'
+export const api = 'http://localhost:3000/api'
 import { generateUUID } from './lib.js'
 import { Player } from '../Actors/Player.js'
 export class SessionManager {
@@ -16,7 +16,6 @@ export class SessionManager {
   async connectSocket() {
     try {
       const res = await this.ws.request({ type: 'connect', clientId: this.id })
-      //this.ws.on('updaterequired', () => this.refreshBoardState());
       this.ws.on("turnAction", (msg) => this.gameManager.handleTurnAction(msg))
       this.ws.on("stateUpdate", (msg) => this.gameManager.handleStateUpdate(msg))
       return true

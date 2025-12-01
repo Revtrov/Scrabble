@@ -151,8 +151,6 @@ export class GameManager {
    * Runs when websocket sends action to session manager
    */
   static async handleTurnAction(msg) {
-    // identify whether to act on broadcast
-    // (message from this client)?
   }
   static async handleStateUpdate(msg) {
     console.log(msg)
